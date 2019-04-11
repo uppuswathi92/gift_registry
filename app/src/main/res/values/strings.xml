@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Swathi_GiftRegistryProject</string>
+    <string name="login">Login</string>
+    <string name="username">Enter Username</string>
+    <string name="password">Enter Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="not_registered">Not registred yet? Click here to register!</string>
+    <string name="registration">Registration</string>
+    <string name="email">Enter Email Address</string>
+    <string name="firstname">Enter First Name</string>
+    <string name="lastname">Enter Last Name</string>
+    <string name="phone">Enter phone number</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="mandatory">Please fill all mandatory fields!</string>
+    <string name="confirm_error">Password and confirm password must be same!</string>
+    <string name="valid_username">Please enter valid username</string>
+    <string name="register_success">Registration Successful. Please login.</string>
+    <string name="reset_success">Password updated. Please login.</string>
+    <string name="no_events">No Events yet</string>
+    <string name="create_event">Create an event</string>
+    <string name="address">Enter Address</string>
+    <string name="event_name">Enter Event Name</string>
+    <string name="event_date">Enter Event Date</string>
+</resources>
