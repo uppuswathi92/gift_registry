@@ -48,6 +48,7 @@ public class OtherEventsActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(OtherEventsActivity.this, OtherEventsProductsActivity.class);
+                    intent.putExtra("username",username);
                     intent.putExtra("eventId", ""+eventIds.get(position));
                     startActivity(intent);
                 }

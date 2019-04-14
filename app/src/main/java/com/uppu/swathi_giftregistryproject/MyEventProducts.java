@@ -3,6 +3,7 @@ package com.uppu.swathi_giftregistryproject;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ public class MyEventProducts extends AppCompatActivity {
     private ProductsDatabase myDb;
     private ListView productsList;
     private ArrayAdapter<String> productAdapter;
+    ArrayList<Integer> productIds;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,7 @@ public class MyEventProducts extends AppCompatActivity {
         eventId = getEventId();
         myDb = new ProductsDatabase(this);
         getProducts(eventId);
+        registerForContextMenu(productsList);
     }
     public String getEventId(){
         Intent eventsIntent = getIntent();
@@ -70,12 +73,13 @@ public class MyEventProducts extends AppCompatActivity {
             //noEvents.setVisibility(View.VISIBLE);
         }*/
         ArrayList<String> products = new ArrayList<String>();
+        productIds = new ArrayList<Integer>();
         HashMap<Integer, String> getProducts = myDb.getProductsById(eId);
         Iterator it = getProducts.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
             products.add((String) pair.getValue());
-            //productIds.add((Integer) pair.getKey());
+            productIds.add((Integer) pair.getKey());
             // System.out.println(pair.getKey() + " = " + pair.getValue());
             it.remove(); // avoids a ConcurrentModificationException
         }
@@ -123,5 +127,26 @@ public class MyEventProducts extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.product_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int index = info.position;
+        switch (item.getItemId()){
+            case R.id.editProduct:
+                Intent editIntent = new Intent(MyEventProducts.this, AddProduct.class);
+                editIntent.putExtra("status", "edit");
+                editIntent.putExtra("productId", ""+productIds.get(index));
+                startActivity(editIntent);
+        }
+        return super.onContextItemSelected(item);
     }
 }

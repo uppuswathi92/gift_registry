@@ -19,6 +19,9 @@ public class ProductsDatabase extends SQLiteOpenHelper {
     public static final String col3 = "productLink";
     public static final String col4 = "productColor";
     public static final String col5 = "productId";
+    public static final String col6 = "isPurchased";
+    public static final String col7 = "purchasedBy";
+    
     ContentValues contentValues;
 
     public ProductsDatabase(Context context) {
@@ -27,7 +30,7 @@ public class ProductsDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table "+ table_name + "("+col1+" INTEGER, "+col2 + " TEXT, " +  col3 + " TEXT, " +  col4 + " TEXT, " + col5 + " INTEGER PRIMARY KEY)");
+        db.execSQL("create table "+ table_name + "("+col1+" INTEGER, "+col2 + " TEXT, " +  col3 + " TEXT, " +  col4 + " TEXT, " + col5 + " INTEGER PRIMARY KEY, " + col6 + " INTEGER, " + col7 + " TEXT )");
     }
 
     @Override
@@ -108,9 +111,35 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         Cursor cursor =db.rawQuery(rawquery, null);
 
         while (cursor.moveToNext()){
-            productDetails.add(new Product(productId ,cursor.getString(cursor.getColumnIndex(col4)),cursor.getString(cursor.getColumnIndex(col3)),cursor.getString(cursor.getColumnIndex(col2))));
+            productDetails.add(new Product(productId ,cursor.getString(cursor.getColumnIndex(col4)),cursor.getString(cursor.getColumnIndex(col3)),cursor.getString(cursor.getColumnIndex(col2)),cursor.getInt(cursor.getColumnIndex(col6)),cursor.getString(cursor.getColumnIndex(col7))));
         }
 
         return productDetails;
+    }
+
+    public boolean updateProduct(Product product, String username){
+        updatePurchase(product, username);
+        //using content values to store the updated password, where the employee id entered by user
+        ContentValues values = new ContentValues();
+        values.put(col6, product.isPurchased());
+        values.put(col7, product.getIsPurchasedBy());
+        String where = "productId = ?";
+        String[] whereArgs = { ""+product.getProductId() };
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean updateSuccessful = db.update(table_name, values, where, whereArgs) > 0;
+        db.close();
+        return updateSuccessful;
+    }
+
+    public void updatePurchase(Product product, String username){
+        ContentValues values = new ContentValues();
+        values.put(col6, 0);
+        values.put(col7, "");
+        String where = "purchasedBy = ?";
+        String[] whereArgs = { ""+username };
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean updateSuccessful = db.update(table_name, values, where, whereArgs) > 0;
+        db.close();
+        return;
     }
 }

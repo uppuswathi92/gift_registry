@@ -5,12 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uppu.swathi_project_database.ProductsDatabase;
 
+import java.util.ArrayList;
+
 public class AddProduct extends AppCompatActivity {
-    private String eventId, status;
+    private String eventId, status, productId;
     ProductsDatabase myDb;
     private EditText productName, productLink, productColor;
     @Override
@@ -20,9 +23,30 @@ public class AddProduct extends AppCompatActivity {
         eventId = getEventId();
         setStatus();
         myDb = new ProductsDatabase(this);
+        productId = getIntent().getStringExtra("productId");
+        status = getIntent().getStringExtra("status");
         productName = (EditText) findViewById(R.id.productName);
         productLink = (EditText) findViewById(R.id.productLink);
         productColor = (EditText) findViewById(R.id.productColor);
+        if(status.equals("edit") || status.equals("view")){
+            getProductDetails();
+            if(status.equals("view")){
+                productName.setEnabled(false);
+                productLink.setEnabled(false);
+                productLink.setEnabled(false);
+            }
+        }
+    }
+
+    public void getProductDetails(){
+        ArrayList<Product> productDetails = myDb.getProductDetails(productId);
+        Toast.makeText(getApplicationContext(), ""+productDetails.get(0).getProductColor(), Toast.LENGTH_SHORT).show();
+        if(productDetails.size() > 0){
+
+            productName.setText(productDetails.get(0).getProductName(), TextView.BufferType.EDITABLE);
+            productLink.setText(productDetails.get(0).getProductLink(), TextView.BufferType.EDITABLE);
+            productColor.setText(productDetails.get(0).getProductColor(), TextView.BufferType.EDITABLE);
+        }
     }
     public void setStatus(){
         Intent eventIntent = getIntent();

@@ -48,5 +48,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/purchaseProduct"
+        android:onClick="purchaseProduct"
         android:text="Purchase Product"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/productPurchased"
+        android:visibility="gone"
+        android:text="This product has already been purchased!"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/purchased"
+        android:visibility="gone"
+        android:text="You purchased this product!"/>
 </LinearLayout>

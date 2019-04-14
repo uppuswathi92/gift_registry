@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class OtherEventsProductsActivity extends AppCompatActivity {
-    private String eventId;
+    private String eventId, username;
     private ListView otherProductsList;
     ArrayAdapter<String> otherProductAdapter;
     private ProductsDatabase myDb;
@@ -28,6 +28,7 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_events_products);
         eventId = getIntent().getStringExtra("eventId");
+        username = getIntent().getStringExtra("username");
         otherProductsList = (ListView) findViewById(R.id.other_products_list);
         otherProductsList.setFocusable(false);
         myDb = new ProductsDatabase(this);
@@ -57,6 +58,7 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
                     intent.putExtra("eventId", eventId);
                     Toast.makeText(getApplicationContext(), ""+productIds.get(position), Toast.LENGTH_SHORT).show();
                     intent.putExtra("productId", ""+productIds.get(position));
+                    intent.putExtra("username",username);
                     intent.putExtra("status", "view");
                     startActivity(intent);
                 }

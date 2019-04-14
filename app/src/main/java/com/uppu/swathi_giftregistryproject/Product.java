@@ -5,12 +5,32 @@ public class Product {
     private String productColor;
     private String productLink;
     private String productName;
+    private int isPurchased;
+    private String isPurchasedBy;
 
-    public Product(String productId, String productColor, String productLink, String productName) {
+    public Product(String productId, String productColor, String productLink, String productName, int isPurchased, String isPurchasedBy) {
         this.productId = productId;
         this.productColor = productColor;
         this.productLink = productLink;
         this.productName = productName;
+        this.isPurchased = isPurchased;
+        this.isPurchasedBy = isPurchasedBy;
+    }
+
+    public int isPurchased() {
+        return isPurchased;
+    }
+
+    public void setPurchased(int purchased) {
+        isPurchased = purchased;
+    }
+
+    public String getIsPurchasedBy() {
+        return isPurchasedBy;
+    }
+
+    public void setIsPurchasedBy(String isPurchasedBy) {
+        this.isPurchasedBy = isPurchasedBy;
     }
 
     public String getProductId() {
