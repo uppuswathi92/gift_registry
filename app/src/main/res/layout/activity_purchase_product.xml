@@ -36,6 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/proImage"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

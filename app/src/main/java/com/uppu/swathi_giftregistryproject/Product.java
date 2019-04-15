@@ -7,14 +7,24 @@ public class Product {
     private String productName;
     private int isPurchased;
     private String isPurchasedBy;
+    private byte[] productImage;
 
-    public Product(String productId, String productColor, String productLink, String productName, int isPurchased, String isPurchasedBy) {
+    public Product(String productId, String productColor, String productLink, String productName, int isPurchased, String isPurchasedBy, byte[] productImage) {
         this.productId = productId;
         this.productColor = productColor;
         this.productLink = productLink;
         this.productName = productName;
         this.isPurchased = isPurchased;
         this.isPurchasedBy = isPurchasedBy;
+        this.productImage = productImage;
+    }
+
+    public byte[] getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(byte[] productImage) {
+        this.productImage = productImage;
     }
 
     public int isPurchased() {

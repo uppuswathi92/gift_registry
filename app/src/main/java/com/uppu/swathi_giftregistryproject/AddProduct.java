@@ -1,21 +1,35 @@
 package com.uppu.swathi_giftregistryproject;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uppu.swathi_project_database.ProductsDatabase;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class AddProduct extends AppCompatActivity {
     private String eventId, status, productId;
+    ImageView productImage;
     ProductsDatabase myDb;
+    Uri selectedImage;
+    Button upload, addProduct;
     private EditText productName, productLink, productColor;
+    private static final int SELECT_PICTURE = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,8 +37,11 @@ public class AddProduct extends AppCompatActivity {
         eventId = getEventId();
         setStatus();
         myDb = new ProductsDatabase(this);
+        productImage = (ImageView) findViewById(R.id.productImage);
         productId = getIntent().getStringExtra("productId");
         status = getIntent().getStringExtra("status");
+        upload = (Button) findViewById(R.id.upload);
+        addProduct = (Button) findViewById(R.id.addProduct);
         productName = (EditText) findViewById(R.id.productName);
         productLink = (EditText) findViewById(R.id.productLink);
         productColor = (EditText) findViewById(R.id.productColor);
@@ -33,19 +50,28 @@ public class AddProduct extends AppCompatActivity {
             if(status.equals("view")){
                 productName.setEnabled(false);
                 productLink.setEnabled(false);
-                productLink.setEnabled(false);
+                productColor.setEnabled(false);
+                upload.setVisibility(View.GONE);
+            }else{
+                addProduct.setText("Edit Product");
             }
         }
     }
-
+    public static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
     public void getProductDetails(){
-        ArrayList<Product> productDetails = myDb.getProductDetails(productId);
-        Toast.makeText(getApplicationContext(), ""+productDetails.get(0).getProductColor(), Toast.LENGTH_SHORT).show();
-        if(productDetails.size() > 0){
+        //ArrayList<Product> productDetails = myDb.getProductDetails(productId);
+        Toast.makeText(getApplicationContext(), ""+productId, Toast.LENGTH_SHORT).show();
+        Product pro = myDb.getProductDetails(productId);
+        //Toast.makeText(getApplicationContext(), pro.getProductColor(), Toast.LENGTH_SHORT).show();
 
-            productName.setText(productDetails.get(0).getProductName(), TextView.BufferType.EDITABLE);
-            productLink.setText(productDetails.get(0).getProductLink(), TextView.BufferType.EDITABLE);
-            productColor.setText(productDetails.get(0).getProductColor(), TextView.BufferType.EDITABLE);
+        if(pro !=  null){
+            productName.setText(pro.getProductName(), TextView.BufferType.EDITABLE);
+            productLink.setText(pro.getProductLink(), TextView.BufferType.EDITABLE);
+            productColor.setText(pro.getProductColor(), TextView.BufferType.EDITABLE);
+            byte[] imageBytes = pro.getProductImage();
+            productImage.setImageBitmap(getImage(imageBytes));
         }
     }
     public void setStatus(){
@@ -61,8 +87,54 @@ public class AddProduct extends AppCompatActivity {
         Intent eventIntent = getIntent();
         return eventIntent.getStringExtra("eventId");
     }
+    void openImageChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                selectedImage = data.getData();
+                productImage.setImageURI(selectedImageUri);
+            }
+        }
+    }
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+    public byte[] saveImageInDB(Uri selectedImageUri) {
+        byte[] inputData = null;
+        try {
+            InputStream iStream = getContentResolver().openInputStream(selectedImageUri);
+            inputData = getBytes(iStream);
+            //dbHelper.insertImage(inputData);
+            //dbHelper.close();
+
+        } catch (IOException ioe) {
+            //Log.e(TAG, "<saveImageInDB> Error : " + ioe.getLocalizedMessage());
+            //dbHelper.close();
+
+        }
+        return inputData;
+
+    }
+    public void uploadPicture(View v){
+        openImageChooser();
+    }
     public void addNewProduct(View v){
-        boolean added = myDb.addProduct(eventId, productName.getText().toString(), productLink.getText().toString(), productColor.getText().toString());
+        byte[] productImg = saveImageInDB(selectedImage);
+        boolean added = myDb.addProduct(eventId, productName.getText().toString(), productLink.getText().toString(), productColor.getText().toString(), productImg);
         if(added){
             Intent intent = new Intent(AddProduct.this, MyEventProducts.class);
             intent.putExtra("eventId", eventId);

@@ -90,7 +90,7 @@ public class MyEventProducts extends AppCompatActivity {
             productAdapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_expandable_list_item_1, products);
             productsList.setAdapter(productAdapter);
-            productsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /*productsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(MyEventProducts.this, AddProduct.class);
@@ -98,7 +98,7 @@ public class MyEventProducts extends AppCompatActivity {
                     intent.putExtra("status", "view");
                     startActivity(intent);
                 }
-            });
+            });*/
         }
     }
 
@@ -146,6 +146,12 @@ public class MyEventProducts extends AppCompatActivity {
                 editIntent.putExtra("status", "edit");
                 editIntent.putExtra("productId", ""+productIds.get(index));
                 startActivity(editIntent);
+                break;
+            case R.id.viewProduct:
+                Intent viewIntent = new Intent(MyEventProducts.this, AddProduct.class);
+                viewIntent.putExtra("status", "view");
+                viewIntent.putExtra("productId", ""+productIds.get(index));
+                startActivity(viewIntent);
         }
         return super.onContextItemSelected(item);
     }

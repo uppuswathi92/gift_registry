@@ -25,17 +25,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Product Image"/>
+    <ImageView
+        android:id="@+id/productImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Take Picture"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Upload Picture"/>
+        android:text="Upload Picture"
+        android:id="@+id/upload"
+        android:onClick="uploadPicture"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Product"
+        android:id="@+id/addProduct"
         android:onClick="addNewProduct"/>
 </LinearLayout>
