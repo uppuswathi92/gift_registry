@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/addInvitee" android:title="Add Invitees"/>
+    <item android:id="@+id/updateEvent" android:title="Update Event"/>
     <item android:id="@+id/deleteEvent" android:title="Delete Event"/>
 
 </menu>

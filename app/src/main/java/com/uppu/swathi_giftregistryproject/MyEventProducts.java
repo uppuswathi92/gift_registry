@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MyEventProducts extends AppCompatActivity {
-    private String eventId;
+    private String eventId, username;
     private ProductsDatabase myDb;
     private ListView productsList;
     private ArrayAdapter<String> productAdapter;
@@ -32,6 +32,7 @@ public class MyEventProducts extends AppCompatActivity {
         setContentView(R.layout.activity_my_event_products);
         productsList = (ListView) findViewById(R.id.myProducts);
         eventId = getEventId();
+        username = getIntent().getStringExtra("username");
         myDb = new ProductsDatabase(this);
         getProducts(eventId);
         registerForContextMenu(productsList);
@@ -43,6 +44,7 @@ public class MyEventProducts extends AppCompatActivity {
     public void addProduct(View v){
         Intent intent = new Intent(this, AddProduct.class);
         Toast.makeText(getApplicationContext(), getEventId(),Toast.LENGTH_LONG).show();
+        intent.putExtra("username", username);
         intent.putExtra("eventId", getEventId());
         intent.putExtra("status", "new");
         startActivity(intent);
@@ -128,7 +130,11 @@ public class MyEventProducts extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+  /*  public void addInvitee(View v){
+        Intent inviteeIntent = new Intent(MyEventProducts.this, AddInviteeActivity.class);
+        inviteeIntent.putExtra("eventId", eventId);
+        startActivity(inviteeIntent);
+    }*/
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -144,15 +150,24 @@ public class MyEventProducts extends AppCompatActivity {
             case R.id.editProduct:
                 Intent editIntent = new Intent(MyEventProducts.this, AddProduct.class);
                 editIntent.putExtra("status", "edit");
+                editIntent.putExtra("username", username);
                 editIntent.putExtra("productId", ""+productIds.get(index));
                 startActivity(editIntent);
                 break;
             case R.id.viewProduct:
                 Intent viewIntent = new Intent(MyEventProducts.this, AddProduct.class);
                 viewIntent.putExtra("status", "view");
+                viewIntent.putExtra("username", username);
                 viewIntent.putExtra("productId", ""+productIds.get(index));
                 startActivity(viewIntent);
         }
         return super.onContextItemSelected(item);
     }
+    /*public void updateEvent(View v){
+        Intent updateIntent = new Intent(MyEventProducts.this, CreateEventActivity.class);
+        updateIntent.putExtra("username", username);
+        updateIntent.putExtra("eventId", eventId);
+        updateIntent.putExtra("status", "update");
+        startActivity(updateIntent);
+    }*/
 }

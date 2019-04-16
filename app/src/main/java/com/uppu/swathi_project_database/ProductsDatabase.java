@@ -171,4 +171,27 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         db.close();
         return;
     }
+
+    public boolean deleteProduct(String eventId){
+        //query for deleting record based on eventId
+        boolean deleteSuccessful = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        deleteSuccessful = db.delete(table_name, "eventId ='" + eventId + "'", null) > 0;
+        db.close();
+        return deleteSuccessful;
+    }
+    public boolean updateProductDetails(String productId, String productName, String productLink, String productColor, byte[] productImg){
+        SQLiteDatabase db =  this.getWritableDatabase();
+        //using content values to store the updated password, where the employee id entered by user
+        ContentValues values = new ContentValues();
+        values.put(col2,productName);
+        values.put(col3,productLink);
+        values.put(col4,productColor);
+        values.put(col8,productImg);
+        String where = "productId = ?";
+        String[] whereArgs = { ""+productId };
+        boolean updateSuccessful = db.update(table_name, values, where, whereArgs) > 0;
+        db.close();
+        return updateSuccessful;
+    }
 }

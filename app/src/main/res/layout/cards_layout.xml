@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="25dp"
     android:layout_marginBottom="25dp"
     android:orientation="vertical"
     android:tag="cards main container">
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardUseCompatPadding="true"
         card_view:cardCornerRadius="10dp">
 
 

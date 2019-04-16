@@ -3,6 +3,7 @@ package com.uppu.swathi_giftregistryproject;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,6 +29,13 @@ public class MainActivity extends AppCompatActivity {
             success.setText(successMsg);
             success.setVisibility(View.VISIBLE);
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.myToolbar);
+        //not set the tool bar to act as action bar for this activity
+        setSupportActionBar(toolbar);
+        //In order to set logo to the Action bar in the main Activity
+        //getSupportActionBar().setLogo(R.mipmap.ic_launcher); //to set the logo
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
     public void signIn(View v){
         success.setVisibility(View.GONE);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.EventLog;
 
 import com.uppu.swathi_giftregistryproject.Events;
 
@@ -18,12 +19,14 @@ public class EventsDatabase  extends SQLiteOpenHelper {
     public static final String col3 = "eventAddress";
     public static final String col4 = "eventDateTime";
     InviteesDatabase inviteeDb;
+    ProductsDatabase productsDb;
     ContentValues contentValues;
 
     public EventsDatabase(Context context) {
 
         super(context, table_name, null, 1);
         inviteeDb = new InviteesDatabase(context);
+        productsDb = new ProductsDatabase(context);
     }
 
     @Override
@@ -144,6 +147,47 @@ public class EventsDatabase  extends SQLiteOpenHelper {
             }
         }
         return allEvents;
+    }
+
+    public Events getEventById(String eventId){
+        //Checks if user details exists in database
+        Events event = null;
+        SQLiteDatabase db= this.getWritableDatabase();
+        String rawQuery = "select * from Events"+ " where eventId = '"+eventId + "'";
+        //sending the query and values to search in db
+        //Cursor cursor =db.query(table_name, columns,selection,selectionArgs,null,null,null);
+        Cursor cursor = db.rawQuery(rawQuery, null);
+        //if cusor count > 0 then account exists else account does not exists
+        int eId = Integer.parseInt(eventId);
+        while (cursor.moveToNext()){
+            event = new Events(eId, cursor.getString(cursor.getColumnIndex(col2)), cursor.getString(cursor.getColumnIndex(col3)), cursor.getString(cursor.getColumnIndex(col4)));
+        }
+        return event;
+    }
+
+    public boolean updateEvent(String eventId, String eventName, String eventAdd, String eventDateTime){
+        //using content values to store the updated password, where the employee id entered by user
+        ContentValues values = new ContentValues();
+        values.put(col2, eventName);
+        values.put(col3, eventAdd);
+        values.put(col4, eventDateTime);
+        String where = "eventId = ?";
+        String[] whereArgs = { eventId };
+        SQLiteDatabase db = this.getWritableDatabase();
+        boolean updateSuccessful = db.update(table_name, values, where, whereArgs) > 0;
+        db.close();
+        return updateSuccessful;
+    }
+
+    public boolean deleteEvent(String eventId){
+        inviteeDb.deleteInvitee(eventId);
+        productsDb.deleteProduct(eventId);
+        //query for deleting record based on eventId
+        boolean deleteSuccessful = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        deleteSuccessful = db.delete(table_name, "eventId ='" + eventId + "'", null) > 0;
+        db.close();
+        return deleteSuccessful;
     }
 
 }

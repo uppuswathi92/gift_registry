@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".CreateEventActivity"
     android:orientation="vertical">
+    <include
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Event"
+        android:textSize="26dp"
+        android:layout_marginTop="140dp"
+        android:gravity="center"
+        android:textStyle="bold"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,11 +32,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/eventDate"
-        android:hint="@string/event_date"
-        android:inputType="datetime"/>
+        android:hint="Select Event Date"
+        android:onClick="getDatePicker"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/eventTime"
+        android:hint="Select Event Time"
+        android:onClick="getTimePicker"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_event"
+        android:id="@+id/addEvent"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="120dp"
+        android:background = "@android:color/holo_blue_dark"
+        android:textColor="@android:color/white"
+        android:padding="15dp"
         android:onClick="addEvent"/>
 </LinearLayout>

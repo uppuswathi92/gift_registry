@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".AddProduct"
     android:orientation="vertical">
+    <include
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Product"
+        android:id="@+id/addProductText"
+        android:textSize="26dp"
+        android:layout_marginTop="140dp"
+        android:gravity="center"
+        android:textStyle="bold"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,18 +34,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/productColor"
         android:hint="Product Color"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Product Image"/>
     <ImageView
         android:id="@+id/productImage"
         android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:visibility="gone"
+        />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Upload Picture"
+        android:background = "@android:color/holo_blue_dark"
         android:id="@+id/upload"
         android:onClick="uploadPicture"/>
     <Button
@@ -40,5 +52,10 @@
         android:layout_height="wrap_content"
         android:text="Add Product"
         android:id="@+id/addProduct"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="120dp"
+        android:background = "@android:color/holo_blue_dark"
+        android:textColor="@android:color/white"
+        android:padding="15dp"
         android:onClick="addNewProduct"/>
 </LinearLayout>

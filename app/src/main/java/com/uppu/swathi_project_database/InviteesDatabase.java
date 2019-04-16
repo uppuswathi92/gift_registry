@@ -92,4 +92,12 @@ public class InviteesDatabase extends SQLiteOpenHelper {
         }
         return eventIds;
     }
+    public boolean deleteInvitee(String eventId){
+        //query for deleting record based on eventId
+        boolean deleteSuccessful = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        deleteSuccessful = db.delete(table_name, "eventId ='" + eventId + "'", null) > 0;
+        db.close();
+        return deleteSuccessful;
+    }
 }

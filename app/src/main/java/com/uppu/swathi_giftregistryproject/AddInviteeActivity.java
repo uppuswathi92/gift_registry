@@ -19,6 +19,7 @@ public class AddInviteeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_invitee);
         Intent getIntent = getIntent();
         eventId = getIntent.getStringExtra("eventId");
+        Toast.makeText(getApplicationContext(), eventId, Toast.LENGTH_LONG).show();
         email = (EditText) findViewById(R.id.inviteeEmail);
         myDb = new InviteesDatabase(this);
     }
