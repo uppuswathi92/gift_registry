@@ -12,10 +12,24 @@
         android:layout_height="wrap_content"/>
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:background="@android:color/holo_red_light"
+        android:visibility="gone"
+        android:id="@+id/mandatory"
+        android:text="@string/mandatory"/>
+    <ImageView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="140dp"
+        android:src="@drawable/createevent"/>
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Create Event"
         android:textSize="26dp"
-        android:layout_marginTop="140dp"
         android:gravity="center"
         android:textStyle="bold"/>
     <EditText
@@ -41,14 +55,12 @@
         android:hint="Select Event Time"
         android:onClick="getTimePicker"/>
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/create_event"
         android:id="@+id/addEvent"
         android:layout_marginTop="15dp"
-        android:layout_marginLeft="120dp"
         android:background = "@android:color/holo_blue_dark"
         android:textColor="@android:color/white"
-        android:padding="15dp"
         android:onClick="addEvent"/>
 </LinearLayout>

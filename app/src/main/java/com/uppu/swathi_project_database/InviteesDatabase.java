@@ -66,9 +66,9 @@ public class InviteesDatabase extends SQLiteOpenHelper {
         //Using contentValues to store the values to insert in database
         SQLiteDatabase db =  this.getWritableDatabase();
         contentValues = new ContentValues();
-        String username = registerDb.getUsername(inviteeEmail);
+        //String username = registerDb.getUsername(inviteeEmail);
         contentValues.put(col1,eventId);
-        contentValues.put(col2,username);
+        contentValues.put(col2,inviteeEmail);
         contentValues.put(col3,false);
         //inserting into db
         long result = db.insert(table_name, null,contentValues);

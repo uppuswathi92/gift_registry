@@ -7,6 +7,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.uppu.swathi_project_database.ProductsDatabase;
 
 import java.io.ByteArrayOutputStream;
@@ -24,26 +26,27 @@ import java.util.ArrayList;
 
 public class AddProduct extends AppCompatActivity {
     private String eventId, status, productId, username;
-    ImageView productImage;
-    ProductsDatabase myDb;
-    Uri selectedImage;
-    Button upload, addProduct;
+    private ImageView productImage;
+    private ProductsDatabase myDb;
+    private Uri selectedImage;
+    private Button upload, addProduct;
     private EditText productName, productLink, productColor;
-    TextView addProductText;
-    Product currentProduct;
-    boolean edited = false;
+    private TextView addProductText, mandatory;
+    private Product currentProduct;
+    private boolean edited = false, isValid;
     private static final int SELECT_PICTURE = 100;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
-        eventId = getEventId();
+        eventId = getIntent().getStringExtra("eventId");
         setStatus();
         myDb = new ProductsDatabase(this);
         productImage = (ImageView) findViewById(R.id.productImage);
         productId = getIntent().getStringExtra("productId");
         status = getIntent().getStringExtra("status");
-        username = getIntent().getStringExtra("username");
+        username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        mandatory = (TextView) findViewById(R.id.mandatory);
         upload = (Button) findViewById(R.id.upload);
         addProduct = (Button) findViewById(R.id.addProduct);
         productName = (EditText) findViewById(R.id.productName);
@@ -70,12 +73,8 @@ public class AddProduct extends AppCompatActivity {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
     public void getProductDetails(){
-        //ArrayList<Product> productDetails = myDb.getProductDetails(productId);
-        Toast.makeText(getApplicationContext(), ""+productId, Toast.LENGTH_SHORT).show();
         Product pro = myDb.getProductDetails(productId);
         currentProduct = pro;
-        //Toast.makeText(getApplicationContext(), pro.getProductColor(), Toast.LENGTH_SHORT).show();
-
         if(pro !=  null){
             productName.setText(pro.getProductName(), TextView.BufferType.EDITABLE);
             productLink.setText(pro.getProductLink(), TextView.BufferType.EDITABLE);
@@ -93,10 +92,6 @@ public class AddProduct extends AppCompatActivity {
             productLink.setEnabled(false);
             productColor.setEnabled(false);
         }
-    }
-    public String getEventId(){
-        Intent eventIntent = getIntent();
-        return eventIntent.getStringExtra("eventId");
     }
     void openImageChooser() {
         edited = true;
@@ -119,7 +114,6 @@ public class AddProduct extends AppCompatActivity {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
-
         int len = 0;
         while ((len = inputStream.read(buffer)) != -1) {
             byteBuffer.write(buffer, 0, len);
@@ -131,48 +125,58 @@ public class AddProduct extends AppCompatActivity {
         try {
             InputStream iStream = getContentResolver().openInputStream(selectedImageUri);
             inputData = getBytes(iStream);
-            //dbHelper.insertImage(inputData);
-            //dbHelper.close();
-
-        } catch (IOException ioe) {
-            //Log.e(TAG, "<saveImageInDB> Error : " + ioe.getLocalizedMessage());
-            //dbHelper.close();
-
-        }
+        } catch (IOException ioe) {}
         return inputData;
 
     }
     public void uploadPicture(View v){
         openImageChooser();
     }
+    public boolean validateDetails(){
+        isValid = false;
+        if (TextUtils.isEmpty(productName.getText().toString()) || TextUtils.isEmpty(productLink.getText().toString()) || TextUtils.isEmpty(productColor.getText().toString()) || productImage.getDrawable() == null) {
+            mandatory.setVisibility(View.VISIBLE);
+            isValid = true;
+            if(TextUtils.isEmpty(productName.getText().toString())){
+                productName.setError("Please enter product name!");
+            }
+            if(TextUtils.isEmpty(productLink.getText().toString())){
+                productLink.setError("Please enter product link!");
+            }
+            if(TextUtils.isEmpty(productColor.getText().toString())){
+                productColor.setError("Please enter product color!");
+            }
+        }
+        return isValid;
+    }
     public void addNewProduct(View v){
         byte[] productImg = null;
-        if(edited){
-            productImg =saveImageInDB(selectedImage);
-        }else{
-            productImg = currentProduct.getProductImage();
-        }
-        if(status.equals("new")){
-            boolean added = myDb.addProduct(eventId, productName.getText().toString(), productLink.getText().toString(), productColor.getText().toString(), productImg);
-            if(added){
-                Intent intent = new Intent(AddProduct.this, MyEventProducts.class);
-                intent.putExtra("eventId", eventId);
-                startActivity(intent);
-                Toast.makeText(getApplicationContext(), "product added", Toast.LENGTH_LONG).show();
+        if(!validateDetails()){
+            if(edited){
+                productImg =saveImageInDB(selectedImage);
             }else{
-                Toast.makeText(getApplicationContext(), "product not added", Toast.LENGTH_LONG).show();
+                productImg = currentProduct.getProductImage();
             }
-        }else{
-            updateProduct(productImg);
+            if(status.equals("new")){
+                boolean added = myDb.addProduct(eventId, productName.getText().toString(), productLink.getText().toString(), productColor.getText().toString(), productImg);
+                if(added){
+                    Intent intent = new Intent(AddProduct.this, MyEventProducts.class);
+                    intent.putExtra("eventId", eventId);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Product has been added!", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Product not added!", Toast.LENGTH_LONG).show();
+                }
+            }else{
+                updateProduct(productImg);
+            }
         }
     }
     public void updateProduct(byte[] productImg){
-        Toast.makeText(getApplicationContext(), ""+productId, Toast.LENGTH_SHORT).show();
         boolean updated = myDb.updateProductDetails(productId, productName.getText().toString(), productLink.getText().toString(), productColor.getText().toString(), productImg);
         if(updated){
             Intent productIntent = new Intent(AddProduct.this, MyEventProducts.class);
             productIntent.putExtra("eventId", eventId);
-            productIntent.putExtra("username", username);
             startActivity(productIntent);
         }
     }

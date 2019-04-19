@@ -24,33 +24,20 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
             this.imageViewIcon = (ImageView) itemView.findViewById(R.id.imageView);
         }
     }
-
-    /*public CustomAdapter(ArrayList<DataModel> data) {
-        this.dataSet = data;
-    }*/
-    public CustomAdapter(String[] events){
-        //eventsList = thiseventsList;
-    }
-
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent,
                                            int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cards_layout, parent, false);
-
         view.setOnClickListener(EventsActivity.myOnClickListener);
-
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
     }
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
-
         TextView textViewName = holder.textViewName;
         ImageView imageView = holder.imageViewIcon;
-
-        //textViewName.setText(dataSet.get(listPosition).getName());
         textViewName.setText(eventsList[listPosition]);
         if(eventsList[listPosition].equals("My Events")){
             imageView.setImageResource(R.drawable.myevents);

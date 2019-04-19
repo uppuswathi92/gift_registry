@@ -19,29 +19,36 @@
         android:visibility="gone"
         android:id="@+id/mandatory"
         android:text="@string/mandatory"/>
+    <ImageView
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginLeft="135dp"
+        android:src="@drawable/registration"
+        android:layout_marginTop="100dp"
+        android:background="@android:color/white"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/registration"
         android:textSize="26dp"
         android:gravity="center"
-        android:textStyle="bold"/>
-    <EditText
+        android:textStyle="bold" />
+    <!--<EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/uname"
-        android:hint="@string/username"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/pwd"
-        android:hint="@string/password"/>
+        android:hint="@string/username"/> -->
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/email"
         android:hint="@string/email"/>
     <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pwd"
+        android:hint="@string/password"/>
+    <!--<EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/firstname"
@@ -56,12 +63,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/phone"
         android:inputType="phone"
-        android:hint="@string/phone"/>
+        android:hint="@string/phone"/>-->
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sign_up"
         android:background = "@android:color/holo_blue_dark"
         android:gravity="center"
+        android:textColor="@android:color/white"
         android:onClick="register"/>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone" />
 </LinearLayout>

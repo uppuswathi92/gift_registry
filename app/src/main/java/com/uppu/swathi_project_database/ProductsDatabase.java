@@ -59,9 +59,9 @@ public class ProductsDatabase extends SQLiteOpenHelper {
             return true;
         }
     }
-    public HashMap<Integer, String> getProductsById(String id){
-        HashMap<Integer, String> map = new HashMap<Integer, String>();
-        ArrayList<String> products = new ArrayList<String>();
+    public ArrayList<Product> getProductsById(String id){
+        ArrayList<Product> products = new ArrayList<Product>();
+        //ArrayList<String> products = new ArrayList<String>();
         SQLiteDatabase db = this.getWritableDatabase();
         String rawquery = "select * from "+table_name + " where eventId = "+id;
         String[] columns = {col1,col2,col3,col4};
@@ -70,12 +70,12 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         Cursor cursor =db.rawQuery(rawquery, null);
 
         while (cursor.moveToNext()){
-            map.put(cursor.getInt(cursor.getColumnIndex(col5)), cursor.getString(cursor.getColumnIndex(col2)));
+            products.add(new Product(cursor.getString(cursor.getColumnIndex(col5)), cursor.getString(cursor.getColumnIndex(col4)), cursor.getString(cursor.getColumnIndex(col3)), cursor.getString(cursor.getColumnIndex(col2)), cursor.getInt(cursor.getColumnIndex(col6)), cursor.getString(cursor.getColumnIndex(col7)), retreiveImageFromDB(cursor.getString(cursor.getColumnIndex(col5)))));
 
             //products.add(cursor.getString(cursor.getColumnIndex(col2)));
         }
 
-        return map;
+        return products;
     }
 
     public int createProductId(){
@@ -193,5 +193,13 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         boolean updateSuccessful = db.update(table_name, values, where, whereArgs) > 0;
         db.close();
         return updateSuccessful;
+    }
+    public boolean deleteProductDetail(String productId){
+        //query for deleting record based on eventId
+        boolean deleteSuccessful = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+        deleteSuccessful = db.delete(table_name, "productId ='" + productId + "'", null) > 0;
+        db.close();
+        return deleteSuccessful;
     }
 }

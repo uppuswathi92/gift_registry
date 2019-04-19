@@ -1,6 +1,9 @@
 package com.uppu.swathi_giftregistryproject;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -13,9 +16,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.uppu.swathi_project_database.ProductsDatabase;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,116 +33,41 @@ public class MyEventProducts extends AppCompatActivity {
     private ProductsDatabase myDb;
     private ListView productsList;
     private ArrayAdapter<String> productAdapter;
-    ArrayList<Integer> productIds;
+    private ArrayList<Integer> productIds;
+    private ArrayList<Product> products;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_event_products);
+        if(Build.VERSION.SDK_INT >=23){
+            requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
+        }
         productsList = (ListView) findViewById(R.id.myProducts);
-        eventId = getEventId();
-        username = getIntent().getStringExtra("username");
+        eventId = getIntent().getStringExtra("eventId");
+        username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         myDb = new ProductsDatabase(this);
         getProducts(eventId);
         registerForContextMenu(productsList);
     }
-    public String getEventId(){
-        Intent eventsIntent = getIntent();
-        return eventsIntent.getStringExtra("eventId");
-    }
     public void addProduct(View v){
         Intent intent = new Intent(this, AddProduct.class);
-        Toast.makeText(getApplicationContext(), getEventId(),Toast.LENGTH_LONG).show();
-        intent.putExtra("username", username);
-        intent.putExtra("eventId", getEventId());
+        intent.putExtra("eventId", eventId);
         intent.putExtra("status", "new");
         startActivity(intent);
     }
     public void getProducts(String eId){
-
-        /*ArrayList<String> getProducts = myDb.getProductsById(eId);
-        for(String product: getProducts){
-            products.add(product);
-        }
-
-
-        if(products.size() > 0){
-
-            productAdapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_expandable_list_item_1, products);
-            productsList.setAdapter(productAdapter);
-            productsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(MyEventProducts.this, AddProduct.class);
-                    intent.putExtra("eventId", getEventId());
-                    intent.putExtra("status", "view");
-                    startActivity(intent);
-                }
-            });
-        }else{
-            //noEvents.setVisibility(View.VISIBLE);
-        }*/
-        ArrayList<String> products = new ArrayList<String>();
+        products = myDb.getProductsById(eId);
         productIds = new ArrayList<Integer>();
-        HashMap<Integer, String> getProducts = myDb.getProductsById(eId);
-        Iterator it = getProducts.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            products.add((String) pair.getValue());
-            productIds.add((Integer) pair.getKey());
-            // System.out.println(pair.getKey() + " = " + pair.getValue());
-            it.remove(); // avoids a ConcurrentModificationException
+        ArrayList<String> productNames =  new ArrayList<String>();
+        for(Product product: products){
+            productIds.add(Integer.parseInt(product.getProductId()));
+            productNames.add(product.getProductName());
         }
-
-
-        if(products.size() > 0){
-
-            productAdapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_expandable_list_item_1, products);
+    productAdapter = new ArrayAdapter<String>(this,
+    android.R.layout.simple_expandable_list_item_1, productNames);
             productsList.setAdapter(productAdapter);
-            /*productsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(MyEventProducts.this, AddProduct.class);
-                    intent.putExtra("eventId", getEventId());
-                    intent.putExtra("status", "view");
-                    startActivity(intent);
-                }
-            });*/
-        }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //This gives a MenuInflater object that will be used to
-        // inflate(convert our XML file into Java Object)
-        // the option_menu.xml file.
-        MenuInflater inflater = getMenuInflater();
-        //inflate() method is used to inflate the option_menu.xml.xml file.
-        inflater.inflate(R.menu.my_events_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    //Handling click events
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
-            case R.id.addInvitee:
-                Intent inviteeIntent = new Intent(MyEventProducts.this, AddInviteeActivity.class);
-                inviteeIntent.putExtra("eventId", eventId);
-                startActivity(inviteeIntent);
-                return true;
-            case R.id.deleteEvent:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-  /*  public void addInvitee(View v){
-        Intent inviteeIntent = new Intent(MyEventProducts.this, AddInviteeActivity.class);
-        inviteeIntent.putExtra("eventId", eventId);
-        startActivity(inviteeIntent);
-    }*/
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -150,24 +83,54 @@ public class MyEventProducts extends AppCompatActivity {
             case R.id.editProduct:
                 Intent editIntent = new Intent(MyEventProducts.this, AddProduct.class);
                 editIntent.putExtra("status", "edit");
-                editIntent.putExtra("username", username);
+                editIntent.putExtra("eventId", eventId);
                 editIntent.putExtra("productId", ""+productIds.get(index));
                 startActivity(editIntent);
                 break;
             case R.id.viewProduct:
                 Intent viewIntent = new Intent(MyEventProducts.this, AddProduct.class);
                 viewIntent.putExtra("status", "view");
-                viewIntent.putExtra("username", username);
                 viewIntent.putExtra("productId", ""+productIds.get(index));
                 startActivity(viewIntent);
+                break;
+            case R.id.deleteProduct:
+                boolean deleted = myDb.deleteProductDetail(""+productIds.get(index));
+                if(deleted){
+                    getProducts(eventId);
+                }
         }
         return super.onContextItemSelected(item);
     }
-    /*public void updateEvent(View v){
-        Intent updateIntent = new Intent(MyEventProducts.this, CreateEventActivity.class);
-        updateIntent.putExtra("username", username);
-        updateIntent.putExtra("eventId", eventId);
-        updateIntent.putExtra("status", "update");
-        startActivity(updateIntent);
-    }*/
+    public void emailProducts(View v){
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("plain/text");
+        File data = null;
+        try {
+            Date dateVal = new Date();
+            StringBuffer builder = createFileContent();
+            String filename = dateVal.toString();
+            data = File.createTempFile("Report", ".csv");
+            FileWriter out = (FileWriter) CreateProductsFile.generateCsvFile(
+                    data, builder);
+            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getApplicationContext(), "com.uppu.swathi_giftregistryproject.fileprovider", data));
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{username});
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your products" );
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Hi, \n PFA for your product details.");
+            startActivity(Intent.createChooser(emailIntent, "E-mail"));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public StringBuffer createFileContent(){
+        StringBuffer builder = new StringBuffer();
+        builder.append("Product ID " + "," + "Product Name" + "," + "Product Link" + "," + "Product Color");
+        builder.append("\n");
+        for(Product product: products){
+            builder.append(product.getProductId() + "," + product.getProductName() + "," + product.getProductLink() + "," + product.getProductColor());
+            builder.append("\n");
+        }
+        return builder;
+    }
 }

@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.uppu.swathi_project_database.EventsDatabase;
 
 import java.util.ArrayList;
@@ -20,20 +20,18 @@ import java.util.ArrayList;
 public class OtherEventsActivity extends AppCompatActivity {
     private String username;
     private EventsDatabase myDb;
-    ArrayList<String> eventNames, eventDates;
-    ArrayList<Integer> eventIds;
-    ListView otherEventsList;
-    ArrayAdapter eventsAdapter;
-    EventsListAdapter adapter;
+    private ArrayList<String> eventNames, eventDates;
+    private ArrayList<Integer> eventIds;
+    private ListView otherEventsList;
+    private EventsListAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_events);
         Toolbar toolbar = (Toolbar) findViewById(R.id.myToolbar);
-        //not set the tool bar to act as action bar for this activity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        username = getIntent().getStringExtra("username");
+        username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         otherEventsList = (ListView) findViewById(R.id.other_events_list);
         otherEventsList.setFocusable(false);
         otherEventsList.setFocusableInTouchMode(false);
@@ -46,8 +44,8 @@ public class OtherEventsActivity extends AppCompatActivity {
     }
     public void getOtherEvents(){
         ArrayList<Events> allEvents = myDb.getOtherEvents(username);
-        if(allEvents.size() > 0){
-            for(Events event: allEvents){
+        if(allEvents.size() > 0) {
+            for (Events event : allEvents) {
                 eventNames.add(event.getEventName());
                 eventIds.add(event.getEventId());
                 eventDates.add(event.getEventDate());
@@ -58,25 +56,10 @@ public class OtherEventsActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(OtherEventsActivity.this, OtherEventsProductsActivity.class);
-                    intent.putExtra("username",username);
-                    intent.putExtra("eventId", ""+eventIds.get(position));
+                    intent.putExtra("eventId", "" + eventIds.get(position));
                     startActivity(intent);
                 }
             });
-            /*eventsAdapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_expandable_list_item_1, eventNames);
-            otherEventsList.setAdapter(eventsAdapter);
-            otherEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(OtherEventsActivity.this, OtherEventsProductsActivity.class);
-                    intent.putExtra("username",username);
-                    intent.putExtra("eventId", ""+eventIds.get(position));
-                    startActivity(intent);
-                }
-            });*/
-        }else{
-            //noEvents.setVisibility(View.VISIBLE);
         }
     }
 
@@ -91,7 +74,6 @@ public class OtherEventsActivity extends AppCompatActivity {
        switch (item.getItemId()){
             case R.id.getEventDetails:
                 Intent eventsIntent = new Intent(OtherEventsActivity.this, EventDetailsActivity.class);
-                eventsIntent.putExtra("username", username);
                 startActivity(eventsIntent);
                 return true;
             case R.id.purchasedProducts:

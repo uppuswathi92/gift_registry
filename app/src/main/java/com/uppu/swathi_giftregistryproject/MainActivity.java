@@ -1,55 +1,87 @@
 package com.uppu.swathi_giftregistryproject;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.uppu.swathi_project_database.GiftRegistryDatabase;
 
 public class MainActivity extends AppCompatActivity {
     private EditText email, password;
-    private GiftRegistryDatabase myDb;
-    private TextView success;
+    private TextView success, mandatory;
+    private FirebaseAuth auth;
+    private ProgressBar progressBar;
+    private boolean isValid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         email = (EditText) findViewById(R.id.emailAdd);
         password = (EditText) findViewById(R.id.password);
-        myDb = new GiftRegistryDatabase(this);
         success = (TextView) findViewById(R.id.success);
-        Intent intent = getIntent();
-        String successMsg = intent.getStringExtra("successMsg");
+        String successMsg = getIntent().getStringExtra("successMsg");
         if(successMsg != null){
             success.setText(successMsg);
             success.setVisibility(View.VISIBLE);
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.myToolbar);
-        //not set the tool bar to act as action bar for this activity
         setSupportActionBar(toolbar);
-        //In order to set logo to the Action bar in the main Activity
-        //getSupportActionBar().setLogo(R.mipmap.ic_launcher); //to set the logo
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        auth = FirebaseAuth.getInstance();
+        mandatory = (TextView) findViewById(R.id.mandatory);
     }
-    public void signIn(View v){
-        success.setVisibility(View.GONE);
-        //checking if the credentials entered by user is valid by invoking login method of DatabaseHelper
-        String userExists = myDb.login(email.getText().toString(),password.getText().toString());
-        if(userExists != null){
-            Toast.makeText(getApplicationContext(),"Logged in", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(MainActivity.this, EventsActivity.class);
-            intent.putExtra("username",userExists);
-            startActivity(intent);
-        }else{
-            Toast.makeText(getApplicationContext(),"Not Logged in",Toast.LENGTH_LONG).show();
-        }
-    }
+   public boolean validateDetails(String emailAddress, String pwd){
+       isValid = false;
+       if (TextUtils.isEmpty(pwd)||TextUtils.isEmpty(emailAddress)) {
+           mandatory.setVisibility(View.VISIBLE);
+           isValid = true;
+           if(TextUtils.isEmpty(emailAddress)){
+               email.setError("Please enter email address!");
+           }
+           if(TextUtils.isEmpty(pwd)){
+               password.setError("Please enter password!");
+           }
+       }
+       return isValid;
+   }
+   public void signIn(View v){
+       String emailAddress = email.getText().toString();
+       String pwd = password.getText().toString();
+       if(!validateDetails(emailAddress, pwd)) {
+           progressBar.setVisibility(View.VISIBLE);
+           auth.signInWithEmailAndPassword(emailAddress, pwd)
+                   .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                       @Override
+                       public void onComplete(@NonNull Task<AuthResult> task) {
+                           // If sign in fails, display a message to the user. If sign in succeeds
+                           // the auth state listener will be notified and logic to handle the
+                           // signed in user can be handled in the listener.
+                           progressBar.setVisibility(View.GONE);
+                           if (!task.isSuccessful()) {
+                               // there was an error
+                               Toast.makeText(getApplicationContext(), "Authentication failed!!", Toast.LENGTH_LONG).show();
+                           } else {
+                               Intent intent = new Intent(MainActivity.this, EventsActivity.class);
+                               startActivity(intent);
+
+                           }
+                       }
+                   });
+       }
+   }
     public void signUp(View v){
         Intent registerIntent = new Intent(MainActivity.this, RegistrationActivity.class);
         if(registerIntent.resolveActivity(getPackageManager()) != null){

@@ -11,11 +11,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.uppu.swathi_project_database.EventsDatabase;
 import com.uppu.swathi_project_database.InviteesDatabase;
 
@@ -25,21 +27,21 @@ import java.util.Map;
 import android.widget.ListAdapter;
 
 public class MyEvents extends AppCompatActivity {
-    EventsDatabase myDb;
-    ListView eventsList;
-    TextView noEvents;
-    ArrayAdapter eventsAdapter;
-    ArrayList<String> eventNames;
-    ArrayList<Integer> eventIds;
-    ArrayList<String> eventDates;
+    private EventsDatabase myDb;
+    private ListView eventsList;
+    private TextView noEvents;
+    private ArrayList<String> eventNames, eventDates;
+    private ArrayList<Integer> eventIds;
     private String username;
     private InviteesDatabase inviteesDatabase;
-    ArrayList<Events> allEvents;
-    EventsListAdapter adapter;
+    private ArrayList<Events> allEvents;
+    private EventsListAdapter adapter;
+    private ImageView signout_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_events);
+        username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         myDb = new EventsDatabase(this);
         eventsList = (ListView) findViewById(R.id.events_list);
         noEvents = (TextView) findViewById(R.id.no_events);
@@ -47,8 +49,6 @@ public class MyEvents extends AppCompatActivity {
         eventIds = new ArrayList<Integer>();
         eventDates = new ArrayList<String>();
         allEvents = new ArrayList<Events>();
-        Intent getUser = getIntent();
-        username = getUser.getStringExtra("username");
         inviteesDatabase = new InviteesDatabase(this);
         getEvents();
         ArrayList<Map<String, String>> list = buildData();
@@ -58,28 +58,14 @@ public class MyEvents extends AppCompatActivity {
         SimpleAdapter adapter = new SimpleAdapter(this, list,
                 android.R.layout.simple_list_item_2, from, to);
         registerForContextMenu(eventsList);
-       /* getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setCustomView(R.layout.custom_toolbar_layout);
-        View view =getSupportActionBar().getCustomView();
-
-        ImageButton imageButton= (ImageButton)view.findViewById(R.id.action_bar_back);
-
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        signout_button = (ImageView) findViewById(R.id.signout_button);
+        signout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MyEvents.this, MainActivity.class));
             }
         });
-
-        ImageButton imageButton2= (ImageButton)view.findViewById(R.id.action_bar_forward);
-
-        imageButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"Forward Button is clicked",Toast.LENGTH_LONG).show();
-            }
-        });*/
     }
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -100,7 +86,6 @@ public class MyEvents extends AppCompatActivity {
                 return true;
             case R.id.updateEvent:
                 Intent updateIntent = new Intent(MyEvents.this, CreateEventActivity.class);
-                updateIntent.putExtra("username", username);
                 updateIntent.putExtra("eventId", ""+eventIds.get(index));
                 updateIntent.putExtra("status", "update");
                 startActivity(updateIntent);
@@ -126,29 +111,10 @@ public class MyEvents extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(MyEvents.this, MyEventProducts.class);
-                    intent.putExtra("username", username);
                     intent.putExtra("eventId", ""+eventIds.get(position));
                     startActivity(intent);
                 }
             });
-            /*eventsAdapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, eventNames);
-            eventsList.setAdapter(eventsAdapter);
-            eventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(MyEvents.this, MyEventProducts.class);
-                    intent.putExtra("eventId", ""+eventIds.get(position));
-                    startActivity(intent);
-                }
-            });
-            eventsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(getApplicationContext(), ""+eventIds.get(position), Toast.LENGTH_LONG).show();
-                    return true;
-                }
-            });*/
         }else{
             noEvents.setVisibility(View.VISIBLE);
         }
@@ -171,7 +137,6 @@ public class MyEvents extends AppCompatActivity {
     }
     public void createEvent(View v){
         Intent createIntent = new Intent(MyEvents.this, CreateEventActivity.class);
-        createIntent.putExtra("username", username);
         createIntent.putExtra("status", "new");
         startActivity(createIntent);
     }

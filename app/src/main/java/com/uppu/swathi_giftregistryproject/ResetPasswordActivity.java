@@ -1,63 +1,75 @@
 package com.uppu.swathi_giftregistryproject;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.uppu.swathi_project_database.GiftRegistryDatabase;
 
 public class ResetPasswordActivity extends AppCompatActivity {
-    private EditText password, confirm_password, email;
+    private EditText password, confirm_password, emailId;
     private boolean isValid;
     private TextView mandatory;
-    private GiftRegistryDatabase myDb;
+    private FirebaseAuth auth;
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
-        email = (EditText) findViewById(R.id.reset_email);
+        emailId = (EditText) findViewById(R.id.reset_email);
         password = (EditText) findViewById(R.id.reset_pwd);
         confirm_password = (EditText) findViewById(R.id.confirm_pwd);
         mandatory = (TextView) findViewById(R.id.mandatory);
-        myDb = new GiftRegistryDatabase(this);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        auth = FirebaseAuth.getInstance();
     }
     public void resetPassword(View v){
-        if(validateDetails()){
-            if(myDb.validUsername(email.getText().toString())){
-                boolean updatedPwd = myDb.updatePassword(email.getText().toString(), password.getText().toString());
-                if(updatedPwd){
-                    Intent intent = new Intent(ResetPasswordActivity.this, MainActivity.class);
-                    intent.putExtra("successMsg", getString(R.string.reset_success));
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(getApplicationContext(),"Not Updated",Toast.LENGTH_LONG).show();
-                }
-            }else{
-                mandatory.setText(getString(R.string.valid_username));
-                mandatory.setVisibility(View.VISIBLE);
+        if(validateDetails()) {
+                String email = emailId.getText().toString().trim();
+                progressBar.setVisibility(View.VISIBLE);
+                auth.sendPasswordResetEmail(email)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(ResetPasswordActivity.this, "We have sent you instructions to reset your password!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(ResetPasswordActivity.this, MainActivity.class);
+                                    intent.putExtra("successMsg", getString(R.string.reset_success));
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Not Updated", Toast.LENGTH_LONG).show();
+                                }
+
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
             }
-        }
     }
 
     public boolean validateDetails(){
         isValid = true;
         String error = getString(R.string.mandatory);
-        if(TextUtils.isEmpty(email.getText().toString())){
-            email.setError("Please enter username!");
+        if(TextUtils.isEmpty(emailId.getText().toString()) || TextUtils.isEmpty(password.getText().toString()) || TextUtils.isEmpty(confirm_password.getText().toString())){
             isValid = false;
+        }
+        if(TextUtils.isEmpty(emailId.getText().toString())){
+            emailId.setError("Please enter email address!");
         }
         if(TextUtils.isEmpty(password.getText().toString())){
             password.setError("Please enter password!");
-            isValid = false;
         }
         if(TextUtils.isEmpty(confirm_password.getText().toString())){
             confirm_password.setError("Please confirm password!");
-            isValid = false;
         }
         if(isValid && (!password.getText().toString().equals(confirm_password.getText().toString()))){
             isValid = false;
