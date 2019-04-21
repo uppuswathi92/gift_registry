@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
        String pwd = password.getText().toString();
        if(!validateDetails(emailAddress, pwd)) {
            progressBar.setVisibility(View.VISIBLE);
-           auth.signInWithEmailAndPassword(emailAddress, pwd)
+           auth.signInWithEmailAndPassword(emailAddress.trim(), pwd.trim())
                    .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                        @Override
                        public void onComplete(@NonNull Task<AuthResult> task) {

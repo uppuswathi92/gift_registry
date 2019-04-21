@@ -24,4 +24,5 @@
     <string name="address">Enter Address</string>
     <string name="event_name">Enter Event Name</string>
     <string name="event_date">Enter Event Date</string>
+    <string name="title_activity_address_map">Map</string>
 </resources>

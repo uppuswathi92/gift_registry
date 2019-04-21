@@ -33,11 +33,6 @@
         android:textSize="26dp"
         android:gravity="center"
         android:textStyle="bold" />
-    <!--<EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/uname"
-        android:hint="@string/username"/> -->
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,22 +43,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/pwd"
         android:hint="@string/password"/>
-    <!--<EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/firstname"
-        android:hint="@string/firstname"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lastname"
-        android:hint="@string/lastname"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/phone"
-        android:inputType="phone"
-        android:hint="@string/phone"/>-->
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,7 +55,7 @@
         android:id="@+id/progressBar"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_gravity="center|bottom"
-        android:layout_marginBottom="20dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
         android:visibility="gone" />
 </LinearLayout>

@@ -19,14 +19,14 @@ import com.uppu.swathi_project_database.EventsDatabase;
 import java.util.ArrayList;
 
 public class EventDetailsActivity extends AppCompatActivity {
-    private String username, selectedEvent;
+    private String username, selectedEvent, selectedAddress;
     private EventsDatabase myDb;
     private ArrayList<String> eventNames;
     private ArrayList<Integer> eventIds;
     private Spinner spinner;
     private ArrayList<Events> allEvents;
     private TextView eventName, eventAddress, eventDateTime;
-    private Button getDetails;
+    private Button getDetails, getDirections;
     private ListView eventDetails;
     private ArrayAdapter<String> adapter;
     private ImageView signout_button;
@@ -42,6 +42,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventName = (TextView) findViewById(R.id.eventName);
         eventDetails = (ListView) findViewById(R.id.eventDetailsList);
         getDetails = (Button) findViewById(R.id.getDetails);
+        getDirections = (Button) findViewById(R.id.getDirection);
         signout_button = (ImageView) findViewById(R.id.signout_button);
         signout_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,13 +81,20 @@ public class EventDetailsActivity extends AppCompatActivity {
         ArrayList<String> eventDet = new ArrayList<>();
         for(Events event: allEvents){
             if(event.getEventName().equals(selectedEvent)){
+                getDirections.setVisibility(View.VISIBLE);
                 eventDet.add(event.getEventName());
-                eventDet.add(event.getEventAddress());
                 eventDet.add(event.getEventDate());
+                eventDet.add(event.getEventAddress());
+                selectedAddress = event.getEventAddress();
             }
         }
         adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_expandable_list_item_1, eventDet);
         eventDetails.setAdapter(adapter);
+    }
+    public void getDirections(View v){
+        Intent mapIntent = new Intent(EventDetailsActivity.this, AddressMapActivity.class);
+        mapIntent.putExtra("address", selectedAddress);
+        startActivity(mapIntent);
     }
 }
