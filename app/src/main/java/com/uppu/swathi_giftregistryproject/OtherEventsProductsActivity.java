@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.uppu.swathi_project_database.ProductsDatabase;
@@ -23,13 +25,25 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
     private ProductsDatabase myDb;
     private ArrayList<Product> products;
     private ArrayList<Integer> productIds;
+    private TextView productsadded, noproducts;
+    private ImageView signout_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_events_products);
         eventId = getIntent().getStringExtra("eventId");
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        signout_button = (ImageView) findViewById(R.id.signout_button);
+        signout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(OtherEventsProductsActivity.this, MainActivity.class));
+            }
+        });
         otherProductsList = (ListView) findViewById(R.id.other_products_list);
+        productsadded = (TextView) findViewById(R.id.productsadded);
+        noproducts = (TextView) findViewById(R.id.noproducts);
         otherProductsList.setFocusable(false);
         myDb = new ProductsDatabase(this);
         getProducts(eventId);
@@ -41,6 +55,13 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
         for(Product product: products){
             productIds.add(Integer.parseInt(product.getProductId()));
             productNames.add(product.getProductName());
+        }
+        if(products.size() > 0){
+            productsadded.setVisibility(View.VISIBLE);
+            noproducts.setVisibility(View.GONE);
+        }else{
+            productsadded.setVisibility(View.GONE);
+            noproducts.setVisibility(View.VISIBLE);
         }
         otherProductAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_expandable_list_item_1, productNames);

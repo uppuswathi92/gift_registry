@@ -11,63 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <ImageView
-        android:layout_width="350dp"
-        android:layout_height="250dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="100dp"
         android:layout_marginLeft="60dp"
         android:id="@+id/proImage"/>
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ListView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Product Name: "
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/productName"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Product Link: "
-            android:textSize="20dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/productLink"
-            android:textSize="20dp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Product Color: "
-            android:textSize="20dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/productColor"
-            android:textSize="20dp"/>
-    </LinearLayout>
+        android:id="@+id/purchaseList"></ListView>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

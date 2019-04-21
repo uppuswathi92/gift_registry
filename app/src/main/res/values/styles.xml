@@ -21,7 +21,7 @@
         <!-- Applied to framework control highlights (i.e ripples or list selectors) -->
         <item name="colorControlHighlight">@android:color/holo_red_light</item>
 
-        <item name="android:background">@android:color/holo_blue_dark</item>
+        <item name="android:background">#2784CC</item>
     </style>
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">

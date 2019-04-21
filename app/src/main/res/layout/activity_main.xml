@@ -20,7 +20,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/toolbar_title"
@@ -38,7 +38,7 @@
                 android:id="@+id/toolbar_button"
                 android:layout_marginRight="300dp"
                 android:layout_width="100dp"
-                android:layout_height="500dp"
+                android:layout_height="150dp"
                 android:src="@drawable/gift"
                 android:layout_alignParentEnd="true"/>
 
@@ -110,7 +110,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reset_password"
+            android:text="@string/click_reset_password"
             android:id="@+id/click_reset_password"
             android:textAllCaps="false"
             android:onClick="resetPwd"

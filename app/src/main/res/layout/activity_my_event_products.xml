@@ -10,6 +10,15 @@
         layout="@layout/app_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No products have been added yet!"
+        android:id="@+id/noproducts"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="26sp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,10 +38,11 @@
             android:text="Email Products"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="90dp"
+            android:id="@+id/emailProducts"
             android:padding="15dp"
             android:textColor="@android:color/white"
             android:background = "@android:color/holo_blue_dark"
-            android:onClick="emailProducts"/>
+            android:onClick="emailProductDetails"/>
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"

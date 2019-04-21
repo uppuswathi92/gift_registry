@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/emailNames" android:title="Email Product Names"/>
+    <item android:id="@+id/emailAllDetails" android:title="Email All Product Details"/>
+</menu>

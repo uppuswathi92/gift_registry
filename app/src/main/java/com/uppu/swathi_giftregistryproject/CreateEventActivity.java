@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private int year, month, day, hour, minute;
     private boolean isValid;
     private TextView mandatory;
+    private ImageView signout_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +47,14 @@ public class CreateEventActivity extends AppCompatActivity {
         eventDate=(EditText)findViewById(R.id.eventDate);
         eventTime=(EditText)findViewById(R.id.eventTime);
         addEvent = (Button) findViewById(R.id.addEvent);
+        signout_button = (ImageView) findViewById(R.id.signout_button);
+        signout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(CreateEventActivity.this, MainActivity.class));
+            }
+        });
         if(status.equals("update")){
             getEventById();
         }

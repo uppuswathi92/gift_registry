@@ -13,8 +13,22 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="26sp"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:id="@+id/productsadded"
+        android:textStyle="bold"
         android:text="Products added by the host"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No products have been added  by the host yet!"
+        android:id="@+id/noproducts"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="26sp"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

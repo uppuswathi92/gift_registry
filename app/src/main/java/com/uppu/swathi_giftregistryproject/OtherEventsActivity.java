@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +25,7 @@ public class OtherEventsActivity extends AppCompatActivity {
     private ArrayList<Integer> eventIds;
     private ListView otherEventsList;
     private EventsListAdapter adapter;
+    private ImageView signout_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,14 @@ public class OtherEventsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        signout_button = (ImageView) findViewById(R.id.signout_button);
+        signout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(OtherEventsActivity.this, MainActivity.class));
+            }
+        });
         otherEventsList = (ListView) findViewById(R.id.other_events_list);
         otherEventsList.setFocusable(false);
         otherEventsList.setFocusableInTouchMode(false);

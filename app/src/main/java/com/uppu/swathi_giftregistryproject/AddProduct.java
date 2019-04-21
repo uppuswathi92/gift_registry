@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 public class AddProduct extends AppCompatActivity {
     private String eventId, status, productId, username;
-    private ImageView productImage;
+    private ImageView productImage, signout_button;
     private ProductsDatabase myDb;
     private Uri selectedImage;
     private Button upload, addProduct;
@@ -53,6 +53,14 @@ public class AddProduct extends AppCompatActivity {
         productLink = (EditText) findViewById(R.id.productLink);
         productColor = (EditText) findViewById(R.id.productColor);
         addProductText = (TextView) findViewById(R.id.addProductText);
+        signout_button = (ImageView) findViewById(R.id.signout_button);
+        signout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(AddProduct.this, MainActivity.class));
+            }
+        });
         if(status.equals("edit") || status.equals("view")){
             getProductDetails();
             if(status.equals("view")){

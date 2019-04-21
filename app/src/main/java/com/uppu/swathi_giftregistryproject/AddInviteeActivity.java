@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.uppu.swathi_project_database.InviteesDatabase;
 
 import org.w3c.dom.Text;
@@ -19,6 +21,7 @@ public class AddInviteeActivity extends AppCompatActivity {
     private EditText email;
     private TextView mandatory;
     private boolean isValid;
+    private ImageView signout_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +30,14 @@ public class AddInviteeActivity extends AppCompatActivity {
         eventId = getIntent.getStringExtra("eventId");
         email = (EditText) findViewById(R.id.inviteeEmail);
         mandatory = (TextView) findViewById(R.id.mandatory);
+        signout_button = (ImageView) findViewById(R.id.signout_button);
+        signout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(AddInviteeActivity.this, MainActivity.class));
+            }
+        });
         myDb = new InviteesDatabase(this);
     }
     public boolean validateDetails(){

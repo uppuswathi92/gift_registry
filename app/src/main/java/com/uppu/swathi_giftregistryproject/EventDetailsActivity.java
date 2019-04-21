@@ -8,6 +8,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,6 +27,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ArrayList<Events> allEvents;
     private TextView eventName, eventAddress, eventDateTime;
     private Button getDetails;
+    private ListView eventDetails;
+    private ArrayAdapter<String> adapter;
+    private ImageView signout_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +40,16 @@ public class EventDetailsActivity extends AppCompatActivity {
         eventNames = new ArrayList<String>();
         eventIds = new ArrayList<Integer>();
         eventName = (TextView) findViewById(R.id.eventName);
-        eventAddress = (TextView) findViewById(R.id.eventAddress);
-        eventDateTime = (TextView) findViewById(R.id.eventDateTime);
+        eventDetails = (ListView) findViewById(R.id.eventDetailsList);
         getDetails = (Button) findViewById(R.id.getDetails);
+        signout_button = (ImageView) findViewById(R.id.signout_button);
+        signout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(EventDetailsActivity.this, MainActivity.class));
+            }
+        });
         getOtherEvents();
     }
     public void getOtherEvents(){
@@ -64,13 +76,17 @@ public class EventDetailsActivity extends AppCompatActivity {
             });
         }
     }
-    public void getEventDetails(View v){
+    public void getEventDetails(View v) {
+        ArrayList<String> eventDet = new ArrayList<>();
         for(Events event: allEvents){
             if(event.getEventName().equals(selectedEvent)){
-                eventName.setText(event.getEventName());
-                eventAddress.setText(event.getEventAddress());
-                eventDateTime.setText(event.getEventDate());
+                eventDet.add(event.getEventName());
+                eventDet.add(event.getEventAddress());
+                eventDet.add(event.getEventDate());
             }
         }
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_expandable_list_item_1, eventDet);
+        eventDetails.setAdapter(adapter);
     }
 }
