@@ -2,6 +2,7 @@ package com.uppu.swathi_giftregistryproject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,7 +23,8 @@ public class EventsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     static View.OnClickListener myOnClickListener;
     //data for the cardview and recycler view
-    private String[] eventsList = {"My Events", "Other Events", "How To Use"};
+    //private String[] eventsList = {"My Events", "Other Events", "How To Use"};
+    private String[] eventsList;
     private Integer[] drawableArray = {R.drawable.myevents, R.drawable.invitee, R.drawable.howtouse};
     private String username;
     private ImageView signout_button;
@@ -31,6 +33,7 @@ public class EventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
         myOnClickListener = new MyOnClickListener(this);
+        eventsList = getResources().getStringArray(R.array.events);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         //setting layout manager to linear layout manager
         layoutManager = new LinearLayoutManager(this);
@@ -45,7 +48,7 @@ public class EventsActivity extends AppCompatActivity {
             }
         });
         //setting the custom adapter to the recycler view
-        adapter = new CustomAdapter();
+        adapter = new CustomAdapter(eventsList);
         recyclerView.setAdapter(adapter);
         //getting the email id of logged in user
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -89,5 +92,12 @@ public class EventsActivity extends AppCompatActivity {
             //adapter is notified of any alterations
             adapter.notifyItemRemoved(selectedItemPosition);
         }
+    }
+    //to refresh the recycler view
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        adapter = new CustomAdapter(eventsList);
+        recyclerView.setAdapter(adapter);
     }
 }

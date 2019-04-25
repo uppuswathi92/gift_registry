@@ -25,4 +25,9 @@
     <string name="event_name">Enter Event Name</string>
     <string name="event_date">Enter Event Date</string>
     <string name="title_activity_address_map">Map</string>
+    <string-array name="events">
+        <item>My Events</item>
+        <item>Other Events</item>
+        <item>How To Use</item>
+    </string-array>
 </resources>

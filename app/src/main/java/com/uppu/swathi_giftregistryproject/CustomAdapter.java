@@ -11,7 +11,11 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
-    private String[] eventsList = {"My Events", "Other Events", "How To Use"};
+    private String[] eventsList;
+
+    public CustomAdapter(String[] eventsList){
+        this.eventsList = eventsList;
+    }
 
     //viewholder is used to describe the items and the metadata
     public static class MyViewHolder extends RecyclerView.ViewHolder {
