@@ -40,9 +40,10 @@
 
             <ImageView
                 android:id="@+id/signout_button"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="10dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/signout"
                 android:background="#2784CC"
                 android:layout_alignParentRight="true"/>

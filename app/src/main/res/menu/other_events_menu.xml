@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/getEventDetails" android:title="Get Event Details"
         app:showAsAction="never" />
-    <item android:title="Purchased Products" android:id="@+id/purchasedProducts"
+    <item android:title="Sign Out" android:id="@+id/signout"
         app:showAsAction="never"
         />
 </menu>

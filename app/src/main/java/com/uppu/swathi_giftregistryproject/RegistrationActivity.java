@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RegistrationActivity extends AppCompatActivity {
+    //this activity is used for registration
     private EditText username, password, email;
     private TextView mandatory;
     private boolean isValid;
@@ -33,13 +34,18 @@ public class RegistrationActivity extends AppCompatActivity {
         password = (EditText) findViewById(R.id.pwd);
         email = (EditText) findViewById(R.id.email);
         mandatory = (TextView) findViewById(R.id.mandatory);
+        //gets instance of firebase auth
         auth = FirebaseAuth.getInstance();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
+
+    //invoked on click of register
     public void register(View v){
         String pwd = password.getText().toString();
         String emailAddress = email.getText().toString();
+        //validates details
         if(!validateDetails(emailAddress, pwd)) {
+            //if validated it invokes createUserWithEmailAndPassword function of firebase auth to insert a new user
             progressBar.setVisibility(View.VISIBLE);
             //create user
             auth.createUserWithEmailAndPassword(emailAddress.trim(), pwd.trim())
@@ -54,13 +60,18 @@ public class RegistrationActivity extends AppCompatActivity {
                                 Toast.makeText(RegistrationActivity.this, "Authentication failed." + task.getException(),
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+                                //if task is successful it is redirected to Login page with success message
+                                Intent loginIntent = new Intent(RegistrationActivity.this, MainActivity.class);
+                                loginIntent.putExtra("successMsg", "Registration Successful! Please login.");
+                                startActivity(loginIntent);
                                 finish();
                             }
                         }
                     });
         }
     }
+
+    //Validating if user has entered all details. if user has not entered all the details then error messages are displayed
     public boolean validateDetails(String emailAddress, String pwd){
         isValid = false;
         if (TextUtils.isEmpty(pwd)||TextUtils.isEmpty(emailAddress)) {
@@ -75,5 +86,10 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         }
         return isValid;
+    }
+
+    //redirected to terms and conditions page
+    public void goToTerms(View v){
+        startActivity(new Intent(RegistrationActivity.this, TermsAndConditions.class));
     }
 }

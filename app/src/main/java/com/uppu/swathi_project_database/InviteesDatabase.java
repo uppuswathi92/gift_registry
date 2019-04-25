@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 public class InviteesDatabase extends SQLiteOpenHelper {
+    //database helper for invitees
     public static final String database_name = "invitees.db";
     public static final String table_name = "Invitees";
     public static final String col1 = "eventId";
@@ -27,11 +28,14 @@ public class InviteesDatabase extends SQLiteOpenHelper {
         db.execSQL("create table "+ table_name + "("+col1+" TEXT,  "+col2 + " TEXT, " +  col3 + " BOOLEAN)");
     }
 
+    //invoked when database table is updated with new version
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+table_name);
         onCreate(db);
     }
+
+    //create an invitee when either user adds an event or invites somebody to the event
     public boolean createInvitee(int eventId, String username, boolean isHost){
         //Using contentValues to store the values to insert in database
         SQLiteDatabase db =  this.getWritableDatabase();
@@ -48,13 +52,11 @@ public class InviteesDatabase extends SQLiteOpenHelper {
         }
     }
 
+    //returns all the events related to the user
     public ArrayList<String> getUserEventIds(String username){
-        //Checks if user details exists in database
         ArrayList<String> eventIds = new ArrayList<String>();
         SQLiteDatabase db= this.getWritableDatabase();
         String rawQuery = "select eventId from "+table_name+ " where inviteeName = '"+username + "' and isHost = 1";
-        //sending the query and values to search in db
-        //Cursor cursor =db.query(table_name, columns,selection,selectionArgs,null,null,null);
         Cursor cursor = db.rawQuery(rawQuery, null);
         //if cusor count > 0 then account exists else account does not exists
         while (cursor.moveToNext()){
@@ -62,11 +64,12 @@ public class InviteesDatabase extends SQLiteOpenHelper {
         }
         return eventIds;
     }
+
+    //adds an invitee
     public boolean addInvitee(String eventId, String inviteeEmail){
         //Using contentValues to store the values to insert in database
         SQLiteDatabase db =  this.getWritableDatabase();
         contentValues = new ContentValues();
-        //String username = registerDb.getUsername(inviteeEmail);
         contentValues.put(col1,eventId);
         contentValues.put(col2,inviteeEmail);
         contentValues.put(col3,false);
@@ -78,13 +81,12 @@ public class InviteesDatabase extends SQLiteOpenHelper {
             return true;
         }
     }
+
+    //gets all the eventids user as been invited to
     public ArrayList<String> getOtherEventIds(String username){
-        //Checks if user details exists in database
         ArrayList<String> eventIds = new ArrayList<String>();
         SQLiteDatabase db= this.getWritableDatabase();
         String rawQuery = "select eventId from "+table_name+ " where inviteeName = '"+username + "' and isHost = 0";
-        //sending the query and values to search in db
-        //Cursor cursor =db.query(table_name, columns,selection,selectionArgs,null,null,null);
         Cursor cursor = db.rawQuery(rawQuery, null);
         //if cusor count > 0 then account exists else account does not exists
         while (cursor.moveToNext()){
@@ -92,6 +94,8 @@ public class InviteesDatabase extends SQLiteOpenHelper {
         }
         return eventIds;
     }
+
+    //service for deleting invitee
     public boolean deleteInvitee(String eventId){
         //query for deleting record based on eventId
         boolean deleteSuccessful = false;

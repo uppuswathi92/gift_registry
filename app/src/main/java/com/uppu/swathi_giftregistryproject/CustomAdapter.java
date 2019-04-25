@@ -11,19 +11,21 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHolder> {
 
-    private String[] eventsList = {"My Events", "Other Events"};
+    private String[] eventsList = {"My Events", "Other Events", "How To Use"};
 
+    //viewholder is used to describe the items and the metadata
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-
+        //Initializing the text view and image view
         TextView textViewName;
         ImageView imageViewIcon;
-
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewName = (TextView) itemView.findViewById(R.id.textViewName);
             this.imageViewIcon = (ImageView) itemView.findViewById(R.id.imageView);
         }
     }
+
+    //returns the view holder inflated with the layout
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent,
                                            int viewType) {
@@ -34,19 +36,25 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.MyViewHold
         return myViewHolder;
     }
 
+    //binding the data to the view
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
+        //seeting the textview and imageview content
         TextView textViewName = holder.textViewName;
         ImageView imageView = holder.imageViewIcon;
         textViewName.setText(eventsList[listPosition]);
         if(eventsList[listPosition].equals("My Events")){
             imageView.setImageResource(R.drawable.myevents);
         }
-        if(eventsList[listPosition].equals("Other Events")){
+        else if(eventsList[listPosition].equals("Other Events")){
             imageView.setImageResource(R.drawable.invitee);
+        }
+        else if(eventsList[listPosition].equals("How To Use")){
+            imageView.setImageResource(R.drawable.howtouse);
         }
     }
 
+    //this returns the count of the item to display
     @Override
     public int getItemCount() {
         return eventsList.length;

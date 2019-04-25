@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MyEventProducts extends AppCompatActivity {
+    //this activity is used to displat the products added by the host for the host to view
     private String eventId, username;
     private ProductsDatabase myDb;
     private ListView productsList;
@@ -45,13 +46,16 @@ public class MyEventProducts extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_event_products);
-        if(Build.VERSION.SDK_INT >=23){
+        /*if(Build.VERSION.SDK_INT >=23){
             requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},2);
-        }
+        }*/
         productsList = (ListView) findViewById(R.id.myProducts);
+        //Getting event id to get products added to that eventId
         eventId = getIntent().getStringExtra("eventId");
+        //getting the email id of logged in user
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         noproducts = (TextView) findViewById(R.id.noproducts) ;
+        //Firebase signout functionality in toolbar
         signout_button = (ImageView) findViewById(R.id.signout_button);
         signout_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,16 +65,23 @@ public class MyEventProducts extends AppCompatActivity {
             }
         });
         myDb = new ProductsDatabase(this);
+        //getting the list of products based on the product id
         getProducts(eventId);
+        //adding a context menu for the products
         registerForContextMenu(productsList);
     }
+
+    //called on click of add product button and redirected to AddProduct activity
     public void addProduct(View v){
         Intent intent = new Intent(this, AddProduct.class);
         intent.putExtra("eventId", eventId);
         intent.putExtra("status", "new");
         startActivity(intent);
     }
+
+    //getting the list of products based on the product id
     public void getProducts(String eId){
+        //invoking getProductsById from Products Database and assigning products, productIds and productNames list
         products = myDb.getProductsById(eId);
         productIds = new ArrayList<Integer>();
         ArrayList<String> productNames =  new ArrayList<String>();
@@ -78,16 +89,19 @@ public class MyEventProducts extends AppCompatActivity {
             productIds.add(Integer.parseInt(product.getProductId()));
             productNames.add(product.getProductName());
         }
+        //if no products have been added then no products message is diplayed
         if(products.size() > 0){
             noproducts.setVisibility(View.GONE);
         }else{
             noproducts.setVisibility(View.VISIBLE);
         }
+        //adapter is set to display products in listview
         productAdapter = new ArrayAdapter<String>(this,
         android.R.layout.simple_expandable_list_item_1, productNames);
                 productsList.setAdapter(productAdapter);
     }
 
+    //Context menu is set and its menu layout is inflated
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -95,11 +109,13 @@ public class MyEventProducts extends AppCompatActivity {
         inflater.inflate(R.menu.product_menu, menu);
     }
 
+    //invoked on click of context item
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = info.position;
         switch (item.getItemId()){
+            //editing a product. redirected to AddProduct page with edit status
             case R.id.editProduct:
                 Intent editIntent = new Intent(MyEventProducts.this, AddProduct.class);
                 editIntent.putExtra("status", "edit");
@@ -107,12 +123,14 @@ public class MyEventProducts extends AppCompatActivity {
                 editIntent.putExtra("productId", ""+productIds.get(index));
                 startActivity(editIntent);
                 break;
+            //viewing a product. redirected to AddProduct page with view status
             case R.id.viewProduct:
                 Intent viewIntent = new Intent(MyEventProducts.this, AddProduct.class);
                 viewIntent.putExtra("status", "view");
                 viewIntent.putExtra("productId", ""+productIds.get(index));
                 startActivity(viewIntent);
                 break;
+            //deleting a product. deleteProductDetail is invoked from ProductsDatabase
             case R.id.deleteProduct:
                 boolean deleted = myDb.deleteProductDetail(""+productIds.get(index));
                 if(deleted){
@@ -121,6 +139,8 @@ public class MyEventProducts extends AppCompatActivity {
         }
         return super.onContextItemSelected(item);
     }
+
+    //popup menu invoked on click of Email Products button
     public void emailProductDetails(View v){
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = getMenuInflater();
@@ -135,6 +155,8 @@ public class MyEventProducts extends AppCompatActivity {
         });
         popup.show();
     }
+
+    //invoked when item is selected from popup menu
     public boolean setMenuClick(MenuItem item){
         switch(item.getItemId()){
             case R.id.emailNames:
@@ -147,10 +169,13 @@ public class MyEventProducts extends AppCompatActivity {
                 return false;
         }
     }
+
+    //email is sent to the user with the list pf product names in the message
     public void emailNames(){
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:"+username+"?cc="+"&subject= List of the names of products"));
         intent.putExtra(Intent.EXTRA_EMAIL,username);
+        //string builder is used to appened all the product names into one string
         StringBuilder builder = new StringBuilder();
         int count = 0;
         for(Product product: products){
@@ -162,19 +187,24 @@ public class MyEventProducts extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_SUBJECT, "List of the names of products");
         startActivity(Intent.createChooser(intent, "E-mail"));
     }
+    //email is sent to the user with all the product details in a csv file
     public void emailProducts(){
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("plain/text");
         File data = null;
         try {
-            Date dateVal = new Date();
+            //builder contains all the content to be sent in csv file
             StringBuffer builder = createFileContent();
-            String filename = dateVal.toString();
-            data = File.createTempFile("Report", ".csv");
+            //this creates a temporary csv file
+            data = File.createTempFile("Products", ".csv");
+            //CreateProductsFile is used to generate a csv file specified in data with the content
             FileWriter out = (FileWriter) CreateProductsFile.generateCsvFile(
                     data, builder);
+            //read operations are allowed if this permission is granted
             emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            //the file with content is set as the stream
             emailIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getApplicationContext(), "com.uppu.swathi_giftregistryproject.fileprovider", data));
+            //email is sent to the user with following details
             emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{username});
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your products" );
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Hi, \n PFA for your product details.");
@@ -184,6 +214,8 @@ public class MyEventProducts extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    //this function is used create the content in the csv file
     public StringBuffer createFileContent(){
         StringBuffer builder = new StringBuffer();
         builder.append("Product ID " + "," + "Product Name" + "," + "Product Link" + "," + "Product Color");

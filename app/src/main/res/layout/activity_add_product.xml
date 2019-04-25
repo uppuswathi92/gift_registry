@@ -12,9 +12,20 @@
         android:layout_height="wrap_content"/>
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textColor="@android:color/white"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:background="@android:color/holo_red_light"
+        android:visibility="gone"
+        android:id="@+id/alreadyPurchased"
+        android:text="You cannot update this product as it has already been purchased!"/>
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="40dp"
         android:textSize="20dp"
         android:textAlignment="center"
+        android:textColor="@android:color/white"
         android:background="@android:color/holo_red_light"
         android:visibility="gone"
         android:id="@+id/mandatory"

@@ -52,13 +52,14 @@
         android:background="@android:color/holo_red_light"
         android:visibility="gone"
         android:id="@+id/mandatory"
+        android:textColor="@android:color/white"
         android:text="@string/mandatory"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:textSize="20dp"
         android:textAlignment="center"
-        android:background="@android:color/holo_green_dark"
+        android:background="@color/holo_green_dark"
         android:visibility="gone"
         android:id="@+id/success" />
 
@@ -89,6 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/password"
+            android:inputType="textPassword"
             android:hint="@string/password"/>
         <Button
             android:layout_width="match_parent"
@@ -107,16 +109,20 @@
         android:visibility="gone" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/holo_blue_dark"
             android:text="@string/not_registered"
             android:id="@+id/not_registered"
             android:textAllCaps="false"
             android:onClick="signUp"
             android:background="@null"/>
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/holo_blue_dark"
             android:text="@string/click_reset_password"
             android:id="@+id/click_reset_password"
             android:textAllCaps="false"

@@ -33,26 +33,20 @@ public class OtherEventsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getting the email id of logged in user
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        signout_button = (ImageView) findViewById(R.id.signout_button);
-        signout_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(OtherEventsActivity.this, MainActivity.class));
-            }
-        });
         otherEventsList = (ListView) findViewById(R.id.other_events_list);
-        otherEventsList.setFocusable(false);
-        otherEventsList.setFocusableInTouchMode(false);
-        otherEventsList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         myDb = new EventsDatabase(this);
         eventNames = new ArrayList<String>();
         eventIds = new ArrayList<Integer>();
         eventDates = new ArrayList<String>();
+        //gets events user has been invited to
         getOtherEvents();
     }
+
+    //gets events user has been invited to
     public void getOtherEvents(){
+        //invokes getOtherEvents from Events Database and if data exists then it assigns allEvents, eventNames, eventIds and eventDates
         ArrayList<Events> allEvents = myDb.getOtherEvents(username);
         if(allEvents.size() > 0) {
             for (Events event : allEvents) {
@@ -60,8 +54,10 @@ public class OtherEventsActivity extends AppCompatActivity {
                 eventIds.add(event.getEventId());
                 eventDates.add(event.getEventDate());
             }
+            //adapter is set to the list view
             adapter = new EventsListAdapter(this, allEvents);
             otherEventsList.setAdapter(adapter);
+            //invoked on click of list view item
             otherEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -73,20 +69,26 @@ public class OtherEventsActivity extends AppCompatActivity {
         }
     }
 
+    //on create options menu for this context is initialized
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.other_events_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
+    //invoked on click of option menu item
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
        switch (item.getItemId()){
+           //get event details user has been invited to
             case R.id.getEventDetails:
                 Intent eventsIntent = new Intent(OtherEventsActivity.this, EventDetailsActivity.class);
                 startActivity(eventsIntent);
                 return true;
-            case R.id.purchasedProducts:
+            case R.id.signout:
+                //Firebase signout functionality in toolbar
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(OtherEventsActivity.this, MainActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);

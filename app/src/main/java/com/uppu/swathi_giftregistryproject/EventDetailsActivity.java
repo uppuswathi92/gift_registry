@@ -34,6 +34,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
+        //getting the email id of logged in user
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         myDb = new EventsDatabase(this);
         spinner = (Spinner) findViewById(R.id.events);
@@ -44,6 +45,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         getDetails = (Button) findViewById(R.id.getDetails);
         getDirections = (Button) findViewById(R.id.getDirection);
         signout_button = (ImageView) findViewById(R.id.signout_button);
+        //Firebase signout functionality in toolbar
         signout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,15 +53,20 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(new Intent(EventDetailsActivity.this, MainActivity.class));
             }
         });
+        //getting the event names user has been invited to
         getOtherEvents();
     }
+    //getting the event names user has been invited to and setting the names to the events spinner
     public void getOtherEvents(){
+        //invoking getOtherEvents from EventsDatabse and assigning it to allevents list
         allEvents = myDb.getOtherEvents(username);
+        //if events exists in database then spinner is loaded and assigning eventNames and eventIds lsit
         if(allEvents.size() > 0){
             for(Events event: allEvents){
                 eventNames.add(event.getEventName());
                 eventIds.add(event.getEventId());
             }
+            //initializing the ArrayAdapter to display the eventNames in the spinner
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_spinner_item, eventNames);
             arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -77,7 +84,10 @@ public class EventDetailsActivity extends AppCompatActivity {
             });
         }
     }
+
+    //invoked on click of get event details
     public void getEventDetails(View v) {
+        //iterating allEvents to get the events details based on the event selected by the user and diplaying it in a list
         ArrayList<String> eventDet = new ArrayList<>();
         for(Events event: allEvents){
             if(event.getEventName().equals(selectedEvent)){
@@ -92,6 +102,8 @@ public class EventDetailsActivity extends AppCompatActivity {
                 android.R.layout.simple_expandable_list_item_1, eventDet);
         eventDetails.setAdapter(adapter);
     }
+
+    //invoked on click of get directions button to navigate to maps activity to get the directions for event address
     public void getDirections(View v){
         Intent mapIntent = new Intent(EventDetailsActivity.this, AddressMapActivity.class);
         mapIntent.putExtra("address", selectedAddress);

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProductsDatabase extends SQLiteOpenHelper {
+    //database helper for products
     public static final String database_name = "products.db";
     public static final String table_name = "Products";
     public static final String col1 = "eventId";
@@ -32,15 +33,16 @@ public class ProductsDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table "+ table_name + "("+col1+" INTEGER, "+col2 + " TEXT, " +  col3 + " TEXT, " +  col4 + " TEXT, " + col5 + " INTEGER PRIMARY KEY, " + col6 + " INTEGER, " + col7 + " TEXT," +col8 + " BLOB NOT NULL )");
-        //db.execSQL("create table "+ table_name + "("+col1+" INTEGER, "+col2 + " TEXT, " +  col3 + " TEXT, " +  col4 + " TEXT, " + col5 + " INTEGER PRIMARY KEY, " + col6 + " INTEGER, " + col7 + " TEXT)");
     }
 
+    //invoked when database table is updated with new version
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+table_name);
         onCreate(db);
     }
 
+    //service to add products in database to the specified eventId
     public boolean addProduct(String eventId, String productName, String productLink, String productColor, byte[] imageBytes){
         //Using contentValues to store the values to insert in database
         SQLiteDatabase db =  this.getWritableDatabase();
@@ -59,33 +61,32 @@ public class ProductsDatabase extends SQLiteOpenHelper {
             return true;
         }
     }
+
+    //get product details based on the evntid
     public ArrayList<Product> getProductsById(String id){
         ArrayList<Product> products = new ArrayList<Product>();
-        //ArrayList<String> products = new ArrayList<String>();
         SQLiteDatabase db = this.getWritableDatabase();
         String rawquery = "select * from "+table_name + " where eventId = "+id;
-        String[] columns = {col1,col2,col3,col4};
-        String selection = "eventId = ?";
-        String[] selectionArgs = {""+id};
         Cursor cursor =db.rawQuery(rawquery, null);
 
         while (cursor.moveToNext()){
             products.add(new Product(cursor.getString(cursor.getColumnIndex(col5)), cursor.getString(cursor.getColumnIndex(col4)), cursor.getString(cursor.getColumnIndex(col3)), cursor.getString(cursor.getColumnIndex(col2)), cursor.getInt(cursor.getColumnIndex(col6)), cursor.getString(cursor.getColumnIndex(col7)), retreiveImageFromDB(cursor.getString(cursor.getColumnIndex(col5)))));
-
-            //products.add(cursor.getString(cursor.getColumnIndex(col2)));
         }
 
         return products;
     }
 
+    //create random productid
     public int createProductId(){
         int id = (int) Math.round((Math.random()) * 100000);
+        //check if product id already exists in database
         while(validProductId(id)){
             id = (int) Math.round((Math.random()) * 100000);
         }
         return id;
     }
 
+    //check if product id already exists in database
     public boolean validProductId(int id){
             boolean getCount = false;
             SQLiteDatabase db= this.getWritableDatabase();
@@ -96,7 +97,6 @@ public class ProductsDatabase extends SQLiteOpenHelper {
             //sending the query and values to search in db
             Cursor cursor =db.query(table_name, columns,selection,selectionArgs,null,null,null);
             //if cusor count > 0 then account exists else account does not exists
-
             if(cursor != null && !cursor.isClosed()){
                 int count = cursor.getCount();
                 getCount = (count>0);
@@ -104,6 +104,8 @@ public class ProductsDatabase extends SQLiteOpenHelper {
             }
             return getCount;
     }
+
+    //retrieve image from database in bytes
     public byte[] retreiveImageFromDB(String productId) {
         String selection = "productId = ?";
         String[] selectionArgs = {""+productId};
@@ -119,16 +121,14 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         cur.close();
         return null;
     }
-    //public ArrayList<Product> getProductDetails(String productId){
+
+    //get product details based on product id
     public Product getProductDetails(String productId){
         Product pro = null;
         byte[] image = retreiveImageFromDB(productId);
         ArrayList<Product> productDetails = new ArrayList<Product>();
         SQLiteDatabase db = this.getWritableDatabase();
         String rawquery = "select * from "+table_name + " where productId = "+productId;
-        String[] columns = {col1,col2,col3,col4,col5,col6,col7,col8};
-        String selection = "productId = ?";
-        String[] selectionArgs = {""+productId};
         Cursor cursor =db.rawQuery(rawquery, null);
         if(cursor.moveToFirst() && cursor.getCount() >= 1){
             do{
@@ -136,16 +136,11 @@ public class ProductsDatabase extends SQLiteOpenHelper {
                 pro = new Product(productId ,cursor.getString(cursor.getColumnIndex(col4)),cursor.getString(cursor.getColumnIndex(col3)),cursor.getString(cursor.getColumnIndex(col2)),cursor.getInt(cursor.getColumnIndex(col6)),cursor.getString(cursor.getColumnIndex(col7)), image);
             }while(cursor.moveToNext());
         }
-        //Cursor cursor =db.query(table_name, columns,selection,selectionArgs,null,null,null);
-        //byte[] blob = cursor.getBlob(cursor.getColumnIndex(col8));
-        /*while (cursor.moveToNext()){
-            //productDetails.add(new Product(productId ,cursor.getString(cursor.getColumnIndex(col4)),cursor.getString(cursor.getColumnIndex(col3)),cursor.getString(cursor.getColumnIndex(col2)),cursor.getInt(cursor.getColumnIndex(col6)),cursor.getString(cursor.getColumnIndex(col7)), image));
-            pro = new Product(productId ,cursor.getString(cursor.getColumnIndex(col4)),cursor.getString(cursor.getColumnIndex(col3)),cursor.getString(cursor.getColumnIndex(col2)),cursor.getInt(cursor.getColumnIndex(col6)),cursor.getString(cursor.getColumnIndex(col7)), image);
-        }*/
         cursor.close();
         return pro;
     }
 
+    //service to update product based on productid
     public boolean updateProduct(Product product, String username){
         updatePurchase(product, username);
         //using content values to store the updated password, where the employee id entered by user
@@ -160,6 +155,7 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         return updateSuccessful;
     }
 
+    //invoked when user purchases a product
     public void updatePurchase(Product product, String username){
         ContentValues values = new ContentValues();
         values.put(col6, 0);
@@ -172,6 +168,7 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         return;
     }
 
+    //service to delete a product from database
     public boolean deleteProduct(String eventId){
         //query for deleting record based on eventId
         boolean deleteSuccessful = false;
@@ -180,6 +177,8 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         db.close();
         return deleteSuccessful;
     }
+
+    //service to update a product based on productId
     public boolean updateProductDetails(String productId, String productName, String productLink, String productColor, byte[] productImg){
         SQLiteDatabase db =  this.getWritableDatabase();
         //using content values to store the updated password, where the employee id entered by user
@@ -194,6 +193,8 @@ public class ProductsDatabase extends SQLiteOpenHelper {
         db.close();
         return updateSuccessful;
     }
+
+    //service to delete a product based on productId
     public boolean deleteProductDetail(String productId){
         //query for deleting record based on eventId
         boolean deleteSuccessful = false;

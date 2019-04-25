@@ -27,6 +27,7 @@ public class AddressMapActivity extends FragmentActivity implements OnMapReadyCa
     private GoogleMap mMap;
     private String address;
     private EditText locationText;
+    private UiSettings mUiSettings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +37,12 @@ public class AddressMapActivity extends FragmentActivity implements OnMapReadyCa
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         locationText = (EditText) findViewById(R.id.location);
+        //setting the location to the location of the event
         address = getIntent().getStringExtra("address");
         locationText.setText(address);
     }
-    UiSettings mUiSettings;
+
+    //this is invoked when map is ready to be used
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -53,16 +56,20 @@ public class AddressMapActivity extends FragmentActivity implements OnMapReadyCa
         mMap.setTrafficEnabled(true);
         mMap.setIndoorEnabled(true);
         search(address);
+        //checking if appropriate permissions are granted
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED  && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             return;
         }
         mMap.setMyLocationEnabled(true);
     }
+
+    //invoked on click of search
     public void searchLocation(View v){
         EditText locationSearch = findViewById(R.id.location);
         String location = locationSearch.getText().toString();
         search(location);
     }
+    //based on the location entered, we get the latitude and longitude and set the marker to that location
     public void search(String location){
         List<Address> addressList = null;
         if(location != null || !location.equals("")){
@@ -73,8 +80,9 @@ public class AddressMapActivity extends FragmentActivity implements OnMapReadyCa
             catch (IOException e){}
             Address address =addressList.get(0);
             LatLng latlng = new LatLng(address.getLatitude(), address.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(latlng).title("Your Location"));
+            mMap.addMarker(new MarkerOptions().position(latlng).title(location));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
+            Toast.makeText(getApplication(), location, Toast.LENGTH_LONG).show();
         }
     }
 }

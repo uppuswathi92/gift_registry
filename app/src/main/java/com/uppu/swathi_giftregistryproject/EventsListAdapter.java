@@ -13,7 +13,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class EventsListAdapter  extends ArrayAdapter<Events> {
+public class EventsListAdapter extends ArrayAdapter<Events> {
+    //Array Adapter for the event names and events date to display
     private Context context;
     private ArrayList<Events> events;
     public EventsListAdapter(@NonNull Context context, ArrayList<Events> eventslist) {
@@ -22,6 +23,7 @@ public class EventsListAdapter  extends ArrayAdapter<Events> {
         events = eventslist;
     }
 
+    //getView function is used to return the view inflating it with the laayout and seeting the content in it
     @NonNull
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View listItem = convertView;

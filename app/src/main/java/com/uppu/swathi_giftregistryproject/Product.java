@@ -1,5 +1,6 @@
 package com.uppu.swathi_giftregistryproject;
 
+//Model for product
 public class Product {
     private String productId;
     private String productColor;
@@ -9,6 +10,7 @@ public class Product {
     private String isPurchasedBy;
     private byte[] productImage;
 
+    //constructor
     public Product(String productId, String productColor, String productLink, String productName, int isPurchased, String isPurchasedBy, byte[] productImage) {
         this.productId = productId;
         this.productColor = productColor;
@@ -19,6 +21,7 @@ public class Product {
         this.productImage = productImage;
     }
 
+    //getters and setters
     public byte[] getProductImage() {
         return productImage;
     }

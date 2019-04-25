@@ -12,6 +12,7 @@ import com.uppu.swathi_giftregistryproject.Events;
 import java.util.ArrayList;
 
 public class EventsDatabase  extends SQLiteOpenHelper {
+    //Database helper for Events
     public static final String database_name = "events.db";
     public static final String table_name = "Events";
     public static final String col1 = "eventId";
@@ -23,7 +24,6 @@ public class EventsDatabase  extends SQLiteOpenHelper {
     ContentValues contentValues;
 
     public EventsDatabase(Context context) {
-
         super(context, table_name, null, 1);
         inviteeDb = new InviteesDatabase(context);
         productsDb = new ProductsDatabase(context);
@@ -35,11 +35,14 @@ public class EventsDatabase  extends SQLiteOpenHelper {
         db.execSQL("create table "+ table_name + "("+col1+" TEXT PRIMARY KEY, "+col2 + " TEXT, " +  col3 + " TEXT, " +  col4 + " TEXT )");
     }
 
+    //invoked when database table is updated with new version
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+table_name);
         onCreate(db);
     }
+
+    //used to insert an event in table
     public boolean addEvent(String eventName, String eventAddress, String eventDate, String username){
         //Using contentValues to store the values to insert in database
         SQLiteDatabase db =  this.getWritableDatabase();
@@ -55,19 +58,23 @@ public class EventsDatabase  extends SQLiteOpenHelper {
         if(result == -1){
             return false;
         }else{
+            //if event has been added then user is added to invitee table with isHost as true
             inviteeDb.createInvitee(eventId, username, true);
             return true;
         }
     }
 
+    //creates random event id
     public int createEventId(){
         int id = (int) Math.round((Math.random()) *100000);
+        //checks if event id already exists in database
         while(validEventId(id)){
             id = (int) Math.round((Math.random()) * 100000);
         }
         return id;
     }
 
+    //checks if event id already exists in database
     public boolean validEventId(int id){
         boolean getCount = false;
         SQLiteDatabase db= this.getWritableDatabase();
@@ -87,12 +94,16 @@ public class EventsDatabase  extends SQLiteOpenHelper {
         return getCount;
     }
 
+    //gets all events for the given username
     public ArrayList<Events> getEvents(String username){
         ArrayList<Events> allEvents = new ArrayList<Events>();
+        //gets all the eventsIds related to the user
         ArrayList<String> userEvents = inviteeDb.getUserEventIds(username);
         SQLiteDatabase db = this.getWritableDatabase();
+        //gets all the eventDetails based the eventIds retrieved
         for(String userEvent: userEvents){
             String rawQuery = "select * from "+table_name + " where eventId = " +userEvent;
+            //cursor provides read-write access to the result set returned by database query
             Cursor cursor = db.rawQuery(rawQuery, null);
             while (cursor.moveToNext()){
                 int eId = cursor.getInt(cursor.getColumnIndex(col1));
@@ -103,35 +114,26 @@ public class EventsDatabase  extends SQLiteOpenHelper {
                 allEvents.add(e);
             }
         }
-        /*String[] columns = {col1,col2,col3,col4};
-        Cursor cursor =db.query(table_name,columns,null,null,null,null,null);
-        while (cursor.moveToNext())
-        {
-            int eId = cursor.getInt(cursor.getColumnIndex(col1));
-            String eName = cursor.getString(cursor.getColumnIndex(col2));
-            String eAddress = cursor.getString(cursor.getColumnIndex(col3));
-            String eDate = cursor.getString(cursor.getColumnIndex(col4));
-            Events e = new Events(eId, eName, eAddress, eDate);
-            allEvents.add(e);
-        }*/
         return allEvents;
     }
+
+    //gets all the eventsIds related to the user
     public ArrayList<String> getUserEventIds(String username){
-        //Checks if user details exists in database
         ArrayList<String> eventIds = new ArrayList<String>();
         SQLiteDatabase db= this.getWritableDatabase();
         String rawQuery = "select eventId from Invitees"+ " where inviteeName = '"+username + "'";
-        //sending the query and values to search in db
-        //Cursor cursor =db.query(table_name, columns,selection,selectionArgs,null,null,null);
         Cursor cursor = db.rawQuery(rawQuery, null);
-        //if cusor count > 0 then account exists else account does not exists
+        //if cusor count > 0 then record exists else account does not exists
         while (cursor.moveToNext()){
             eventIds.add(cursor.getString(cursor.getColumnIndex(col1)));
         }
         return eventIds;
     }
+
+    //gets all events user has been invited to
     public ArrayList<Events> getOtherEvents(String username){
         ArrayList<Events> allEvents = new ArrayList<Events>();
+        //gets all the eventsIds for which user has been invited to
         ArrayList<String> otherUserEvents = inviteeDb.getOtherEventIds(username);
         SQLiteDatabase db = this.getWritableDatabase();
         for(String userEvent: otherUserEvents){
@@ -149,13 +151,12 @@ public class EventsDatabase  extends SQLiteOpenHelper {
         return allEvents;
     }
 
+    //gets event details based on event id
     public Events getEventById(String eventId){
         //Checks if user details exists in database
         Events event = null;
         SQLiteDatabase db= this.getWritableDatabase();
         String rawQuery = "select * from Events"+ " where eventId = '"+eventId + "'";
-        //sending the query and values to search in db
-        //Cursor cursor =db.query(table_name, columns,selection,selectionArgs,null,null,null);
         Cursor cursor = db.rawQuery(rawQuery, null);
         //if cusor count > 0 then account exists else account does not exists
         int eId = Integer.parseInt(eventId);
@@ -165,6 +166,7 @@ public class EventsDatabase  extends SQLiteOpenHelper {
         return event;
     }
 
+    //update an event based on event id
     public boolean updateEvent(String eventId, String eventName, String eventAdd, String eventDateTime){
         //using content values to store the updated password, where the employee id entered by user
         ContentValues values = new ContentValues();
@@ -179,7 +181,9 @@ public class EventsDatabase  extends SQLiteOpenHelper {
         return updateSuccessful;
     }
 
+    //delete an event based on event id
     public boolean deleteEvent(String eventId){
+        //deletes records from invitee and products tables with respect to that eventid
         inviteeDb.deleteInvitee(eventId);
         productsDb.deleteProduct(eventId);
         //query for deleting record based on eventId

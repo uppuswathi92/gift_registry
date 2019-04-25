@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class OtherEventsProductsActivity extends AppCompatActivity {
+    //this activity is used to display the products for the events user has been invited to
     private String eventId, username;
     private ListView otherProductsList;
     private ArrayAdapter<String> otherProductAdapter;
@@ -31,8 +32,11 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_events_products);
+        //Getting event id to get product details for that eventId
         eventId = getIntent().getStringExtra("eventId");
+        //getting the email id of logged in user
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        //Firebase signout functionality in toolbar
         signout_button = (ImageView) findViewById(R.id.signout_button);
         signout_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,11 +48,14 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
         otherProductsList = (ListView) findViewById(R.id.other_products_list);
         productsadded = (TextView) findViewById(R.id.productsadded);
         noproducts = (TextView) findViewById(R.id.noproducts);
-        otherProductsList.setFocusable(false);
         myDb = new ProductsDatabase(this);
+        //get all products for the event id
         getProducts(eventId);
     }
+
+    //get all products for the event id
     public void getProducts(String eId){
+        // invoke getProductsById from ProductDatabse and assign products, productIds and productNames
         products = myDb.getProductsById(eId);
         productIds = new ArrayList<Integer>();
         ArrayList<String> productNames =  new ArrayList<String>();
@@ -56,6 +63,7 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
             productIds.add(Integer.parseInt(product.getProductId()));
             productNames.add(product.getProductName());
         }
+        //if products exists in database then its displayed as a list else no products message is displayed
         if(products.size() > 0){
             productsadded.setVisibility(View.VISIBLE);
             noproducts.setVisibility(View.GONE);
@@ -67,6 +75,7 @@ public class OtherEventsProductsActivity extends AppCompatActivity {
                 android.R.layout.simple_expandable_list_item_1, productNames);
         otherProductsList.setAdapter(otherProductAdapter);
         if(productNames.size() > 0){
+            //invoked on click of the product
             otherProductsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

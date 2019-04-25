@@ -41,12 +41,20 @@ public class CreateEventActivity extends AppCompatActivity {
         inviteeDb = new InviteesDatabase(this);
         myDb = new EventsDatabase(this);
         mandatory = (TextView) findViewById(R.id.mandatory);
+        //getting the email id of logged in user
         username = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        //Getting event id to update event to a that eventId
         eventId = getIntent().getStringExtra("eventId");
+        //Based on the status received by previous intent, if its view details are disabled, if its new/update details are enabled to add/edit
         status = getIntent().getStringExtra("status");
+        //if status is update we get event details to be prepopulated based on the event id
+        if(status.equals("update")){
+            getEventById();
+        }
         eventDate=(EditText)findViewById(R.id.eventDate);
         eventTime=(EditText)findViewById(R.id.eventTime);
         addEvent = (Button) findViewById(R.id.addEvent);
+        //Firebase signout functionality in toolbar
         signout_button = (ImageView) findViewById(R.id.signout_button);
         signout_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,13 +63,12 @@ public class CreateEventActivity extends AppCompatActivity {
                 startActivity(new Intent(CreateEventActivity.this, MainActivity.class));
             }
         });
-        if(status.equals("update")){
-            getEventById();
-        }
-
     }
+
+    //retriving event details based on the eventId
     public void getEventById(){
         Events event = myDb.getEventById(eventId);
+        //if that event exists in database then its respective details are pre-populated
         if(event != null){
             eventName.setText(event.getEventName());
             eventAddress.setText(event.getEventAddress());
@@ -71,14 +78,13 @@ public class CreateEventActivity extends AppCompatActivity {
             addEvent.setText("Update Event");
         }
     }
+    //invoking datepicker on click of enter date edit text and once user selects date it is poulated in the edit text
     public void getDatePicker(View v){
         // Get Current Date
         final Calendar c = Calendar.getInstance();
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
-
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year,
@@ -86,42 +92,17 @@ public class CreateEventActivity extends AppCompatActivity {
                 eventDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
             }
         }, year, month, day);
+        //disabling previous dates
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
+    }
 
-    }
-    public void addEvent(View v){
-        if(!validateDetails()) {
-            String eventDateTime = eventDate.getText().toString() + " at " + eventTime.getText().toString();
-            if (status.equals("new")) {
-                boolean added = myDb.addEvent(eventName.getText().toString(), eventAddress.getText().toString(), eventDateTime, username);
-                if (added) {
-                    Intent intent = new Intent(CreateEventActivity.this, MyEvents.class);
-                    startActivity(intent);
-                    Toast.makeText(getApplicationContext(), "Event has been added!", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Event not added!", Toast.LENGTH_LONG).show();
-                }
-            } else {
-                updateEvent(eventDateTime);
-            }
-        }
-    }
-    public void updateEvent(String eventDateTime){
-        boolean updated = myDb.updateEvent(eventId,eventName.getText().toString(), eventAddress.getText().toString(), eventDateTime );
-        if(updated){
-            Intent eventsIntent  = new Intent(CreateEventActivity.this, MyEvents.class);
-            startActivity(eventsIntent);
-            Toast.makeText(getApplicationContext(), "Event updated!", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(getApplicationContext(), "Event not updated!", Toast.LENGTH_SHORT).show();
-        }
-    }
+    //invoking timepick on click of enter time edit text and once user selects time it is poulated in the edit text
     public void getTimePicker(View v){
         // Get Current Time
         final Calendar c = Calendar.getInstance();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
-
         // Launch Time Picker Dialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
@@ -135,6 +116,44 @@ public class CreateEventActivity extends AppCompatActivity {
                 }, hour, minute, false);
         timePickerDialog.show();
     }
+
+    //adding events once user has entered all the details
+    public void addEvent(View v){
+        if(!validateDetails()) {
+            String eventDateTime = eventDate.getText().toString() + " at " + eventTime.getText().toString();
+            //if status is new new event is added else event is updated
+            if (status.equals("new")) {
+                //invoking addEvent from EventsDatabase
+                boolean added = myDb.addEvent(eventName.getText().toString(), eventAddress.getText().toString(), eventDateTime, username);
+                //if its successful then it is redirected to MyEvents page
+                if (added) {
+                    Intent intent = new Intent(CreateEventActivity.this, MyEvents.class);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Event has been added!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Event not added!", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                updateEvent(eventDateTime);
+            }
+        }
+    }
+
+    //invoked  if status received is update
+    public void updateEvent(String eventDateTime){
+        //invoking updateEvent from EventsDatabase
+        boolean updated = myDb.updateEvent(eventId,eventName.getText().toString(), eventAddress.getText().toString(), eventDateTime );
+        //if its successful then it is redirected to MyEvents page
+        if(updated){
+            Intent eventsIntent  = new Intent(CreateEventActivity.this, MyEvents.class);
+            startActivity(eventsIntent);
+            Toast.makeText(getApplicationContext(), "Event updated!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(getApplicationContext(), "Event not updated!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //Validating if user has entered all details. if user has not entered all the details then error messages are displayed
     public boolean validateDetails(){
         isValid = false;
         if (TextUtils.isEmpty(eventName.getText().toString()) || TextUtils.isEmpty(eventAddress.getText().toString()) || TextUtils.isEmpty(eventDate.getText().toString()) || TextUtils.isEmpty(eventTime.getText().toString())) {
