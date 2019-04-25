@@ -27,7 +27,7 @@
         android:id="@+id/purchaseProduct"
         android:onClick="purchaseProduct"
         android:text="Purchase Product"
-        android:background = "@android:color/holo_blue_dark"
+        android:background="@drawable/button"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="100dp"
         android:padding="15dp"

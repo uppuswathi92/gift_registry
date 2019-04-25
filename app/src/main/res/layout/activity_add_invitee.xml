@@ -44,6 +44,6 @@
         android:layout_height="wrap_content"
         android:text="Add Invitee"
         android:textColor="@android:color/white"
-        android:background = "@android:color/holo_blue_dark"
+        android:background="@drawable/button"
         android:onClick="addInvitee"/>
 </LinearLayout>

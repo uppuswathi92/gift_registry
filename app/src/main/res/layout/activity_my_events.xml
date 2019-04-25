@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:text="@string/create_event"
         android:id="@+id/createEvent"
-        android:background = "@android:color/holo_blue_dark"
+        android:background="@drawable/button"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="120dp"
         android:padding="15dp"

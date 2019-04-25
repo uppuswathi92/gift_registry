@@ -52,7 +52,6 @@
         android:background="@android:color/holo_red_light"
         android:visibility="gone"
         android:id="@+id/mandatory"
-        android:textColor="@android:color/white"
         android:text="@string/mandatory"/>
     <TextView
         android:layout_width="match_parent"
@@ -97,9 +96,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/sign_in_btn"
             android:text="@string/sign_in"
+            android:background="@drawable/button"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:background = "@android:color/holo_blue_dark"
             android:onClick="signIn"/>
         <ProgressBar
         android:id="@+id/progressBar"
@@ -109,7 +108,7 @@
         android:visibility="gone" />
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@android:color/holo_blue_dark"
@@ -119,12 +118,12 @@
             android:onClick="signUp"
             android:background="@null"/>
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@android:color/holo_blue_dark"
             android:text="@string/click_reset_password"
             android:id="@+id/click_reset_password"
+            android:textColor="@android:color/holo_blue_dark"
+            android:layout_gravity="center"
             android:textAllCaps="false"
             android:onClick="resetPwd"
             android:background="@null"/>

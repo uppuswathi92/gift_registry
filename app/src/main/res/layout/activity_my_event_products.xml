@@ -30,7 +30,7 @@
             android:layout_marginTop="15dp"
             android:padding="15dp"
             android:textColor="@android:color/white"
-            android:background = "@android:color/holo_blue_dark"
+            android:background="@drawable/button"
             android:onClick="addProduct"/>
         <Button
             android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
             android:id="@+id/emailProducts"
             android:padding="15dp"
             android:textColor="@android:color/white"
-            android:background = "@android:color/holo_blue_dark"
+            android:background="@drawable/button"
             android:onClick="emailProductDetails"/>
     </LinearLayout>
     <ListView

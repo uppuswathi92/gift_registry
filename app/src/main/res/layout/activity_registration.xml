@@ -82,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/sign_up"
-        android:background = "@android:color/holo_blue_dark"
+        android:background="@drawable/button"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:onClick="register"/>

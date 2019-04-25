@@ -14,29 +14,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Get Event Details"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="26sp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
         <Spinner
             android:id="@+id/events"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
-            android:layout_alignParentLeft="true"
+            android:layout_gravity="center"
             android:layout_marginEnd="8dp"></Spinner>
         <Button
-            android:layout_width="175dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background = "@android:color/holo_blue_dark"
-            android:layout_marginLeft="50dp"
+            android:gravity="center"
+            android:background="@drawable/button"
+            android:layout_marginLeft="95dp"
+            android:layout_marginTop="10dp"
             android:layout_alignParentRight="true"
             android:padding="15dp"
             android:textColor="@android:color/white"
